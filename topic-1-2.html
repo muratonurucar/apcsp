@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP CSP - Topic 1.2: Program Function and Purpose</title>
+  <style>
+    :root {
+      --primary: #4a2c8f;
+      --primary-light: #6b45c2;
+      --primary-dark: #36206a;
+      --secondary: #ff7b00;
+      --secondary-light: #ff9a3f;
+      --secondary-dark: #cc6200;
+      --white: #ffffff;
+      --light: #f5f5f5;
+      --gray: #e0e0e0;
+      --dark: #333333;
+      --success: #28a745;
+      --success-light: #d4edda;
+      --success-border: #c3e6cb;
+      --danger: #dc3545;
+      --danger-light: #f8d7da;
+      --danger-border: #f5c6cb;
+      --warning: #ffc107;
+      --warning-light: #fff3cd;
+      --info: #17a2b8;
+      --info-light: #d1ecf1;
+      --info-border: #bee5eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: var(--light);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .navbar-btn {
+      background-color: transparent;
+      border: 2px solid var(--white);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .navbar-btn:hover {
+      background-color: var(--white);
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 20px;
+      display: flex;
+      gap: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 150px);
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sidebar-header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px;
+      border-bottom: 5px solid var(--secondary);
+    }
+
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .sidebar-menu {
+      padding: 20px;
+      overflow-y: auto;
+      height: calc(100% - 100px);
+    }
+
+    .menu-section {
+      margin-bottom: 20px;
+    }
+
+    .menu-section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .menu-list {
+      list-style-type: none;
+    }
+
+    .menu-item {
+      margin-bottom: 10px;
+    }
+
+    .menu-link {
+      display: block;
+      padding: 8px 10px;
+      color: var(--dark);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .menu-link:hover {
+      background-color: var(--light);
+      color: var(--primary);
+    }
+
+    .menu-link.active {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      animation: fadeIn 0.6s ease;
+      animation-delay: 0.1s;
+      animation-fill-mode: both;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+      margin: 0 10px;
+      color: var(--gray);
+    }
+
+    .topic-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .topic-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .topic-overview {
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+
+    .learning-objectives {
+      background-color: var(--info-light);
+      border-left: 5px solid var(--info);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+
+    .learning-objectives h3 {
+      color: var(--info);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .objectives-list {
+      list-style-type: none;
+    }
+
+    .objectives-list li {
+      margin-bottom: 10px;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .objectives-list li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--info);
+      font-weight: bold;
+    }
+
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .section-content p {
+      margin-bottom: 15px;
+    }
+
+    .section-content h4 {
+      font-size: 1.2rem;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      margin-top: 25px;
+    }
+
+    .info-card {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 5px solid var(--primary);
+    }
+
+    .info-card h4 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .example-box {
+      background-color: var(--success-light);
+      border-left: 5px solid var(--success);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .example-title {
+      color: var(--success);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .note-box {
+      background-color: var(--warning-light);
+      border-left: 5px solid var(--warning);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .note-title {
+      color: var(--warning);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-light);
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--gray);
+    }
+
+    .btn-next {
+      margin-left: auto;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .image-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .caption {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .code-example {
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      border-left: 4px solid var(--primary);
+    }
+
+    .diagram {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid var(--gray);
+    }
+
+    .diagram-title {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--primary-dark);
+    }
+
+    .table-container {
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    th {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--light);
+    }
+
+    tr:hover {
+      background-color: var(--gray);
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        margin-bottom: 30px;
+      }
+
+      .sidebar-menu {
+        height: auto;
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin-top: 80px;
+      }
+
+      .navbar {
+        padding: 12px 20px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .topic-title {
+        font-size: 1.8rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .navigation-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn-next {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">AP CSP Quiz Platform</div>
+    <div class="navbar-actions">
+      <a href="big-idea-1.html" class="navbar-btn">Back to Big Idea 1</a>
+      <a href="main-menu.html" class="navbar-btn">Main Menu</a>
+      <button class="navbar-btn" id="logout-btn">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Topic 1.2</div>
+        <div class="sidebar-subtitle">Program Function and Purpose</div>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-section">
+          <h3 class="menu-section-title">Content</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="#introduction" class="menu-link active">Introduction</a></li>
+            <li class="menu-item"><a href="#identifying-purpose" class="menu-link">Identifying Program Purpose</a></li>
+            <li class="menu-item"><a href="#input-output" class="menu-link">Inputs and Outputs</a></li>
+            <li class="menu-item"><a href="#program-components" class="menu-link">Program Components</a></li>
+            <li class="menu-item"><a href="#mapping-statements" class="menu-link">Mapping Statements to Purpose</a></li>
+            <li class="menu-item"><a href="#summary" class="menu-link">Summary</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Practice</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-2-quiz.html" class="menu-link">Take Quiz</a></li>
+            <li class="menu-item"><a href="topic-1-2-practice.html" class="menu-link">Practice Exercises</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Related Topics</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-1.html" class="menu-link">1.1 Collaboration</a></li>
+            <li class="menu-item"><a href="topic-1-3.html" class="menu-link">1.3 Program Design and Development</a></li>
+            <li class="menu-item"><a href="topic-1-4.html" class="menu-link">1.4 Identifying and Correcting Errors</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="breadcrumb">
+        <a href="main-menu.html">Main Menu</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="big-idea-1.html">Big Idea 1</a>
+        <span class="breadcrumb-separator">›</span>
+        <span>Topic 1.2: Program Function and Purpose</span>
+      </div>
+
+      <div class="topic-header">
+        <h1 class="topic-title">Program Function and Purpose</h1>
+        <p class="topic-overview">Understand how to identify the purpose of a computing innovation and how a program's statements map to its intended functionality.</p>
+
+        <div class="learning-objectives">
+          <h3>Learning Objectives</h3>
+          <ul class="objectives-list">
+            <li>Identify the purpose of a computing innovation (CRD-2.A)</li>
+            <li>Explain how a program functions (CRD-2.B)</li>
+            <li>Explain how program statements correspond to a program's overall purpose (CRD-2.C)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Introduction Section -->
+      <section class="content-section" id="introduction">
+        <h2 class="section-title">Introduction to Program Function and Purpose</h2>
+        <div class="section-content">
+          <p>Every computing innovation or program is designed with a specific purpose in mind. Whether it's a simple calculator app, a complex data analysis tool, or a social media platform, programs are created to solve problems, provide services, or meet user needs.</p>
+
+          <p>Understanding a program's function and purpose is essential for both program users and developers. For users, it helps them select the right tool for their needs. For developers, it provides a clear goal to guide the development process and evaluate the effectiveness of their solution.</p>
+
+          <div class="info-card">
+            <h4>Key Definitions</h4>
+            <p><strong>Purpose</strong>: The intended goal or objective of a computing innovation.</p>
+            <p><strong>Function</strong>: What a program or computing innovation actually does - the behavior it exhibits when executed.</p>
+          </div>
+
+          <p>In this topic, we'll explore how to identify a program's purpose, understand its function through inputs and outputs, recognize key program components, and see how specific program statements contribute to fulfilling the overall purpose.</p>
+
+          <div class="image-container">
+            <img src="/api/placeholder/600/300" alt="Various apps on a smartphone screen representing different program purposes">
+            <p class="caption">Figure 1: Different applications serve different purposes, from communication to productivity to entertainment.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Identifying Purpose Section -->
+      <section class="content-section" id="identifying-purpose">
+        <h2 class="section-title">Identifying the Purpose of a Computing Innovation</h2>
+        <div class="section-content">
+          <p>The purpose of a computing innovation is what it's designed to accomplish—the problem it solves or the service it provides. When examining a computing innovation, we can identify its purpose by asking several key questions:</p>
+
+          <h4>Key Questions for Identifying Purpose</h4>
+          <ul>
+            <li>What problem does this innovation address?</li>
+            <li>What task does it help users accomplish?</li>
+            <li>What user needs does it fulfill?</li>
+            <li>What value does it provide to its users?</li>
+            <li>How does it differ from similar innovations?</li>
+          </ul>
+
+          <p>The purpose of a computing innovation often falls into one or more of the following categories:</p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Purpose Category</th>
+                  <th>Description</th>
+                  <th>Examples</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Automation</td>
+                  <td>Performing repetitive tasks with minimal human intervention</td>
+                  <td>Email filters, scheduled data backups, smart home systems</td>
+                </tr>
+                <tr>
+                  <td>Data Analysis</td>
+                  <td>Processing and interpreting large datasets to extract meaningful insights</td>
+                  <td>Weather forecasting apps, market analysis tools, health trackers</td>
+                </tr>
+                <tr>
+                  <td>Communication</td>
+                  <td>Enabling information exchange between individuals or systems</td>
+                  <td>Email applications, messaging platforms, social media</td>
+                </tr>
+                <tr>
+                  <td>Entertainment</td>
+                  <td>Providing leisure activities and enjoyment</td>
+                  <td>Games, streaming services, media players</td>
+                </tr>
+                <tr>
+                  <td>Education</td>
+                  <td>Facilitating learning and skill development</td>
+                  <td>Learning management systems, educational games, tutorial apps</td>
+                </tr>
+                <tr>
+                  <td>Productivity</td>
+                  <td>Enhancing efficiency in completing tasks</td>
+                  <td>Word processors, spreadsheet applications, task management apps</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="example-box">
+            <h4 class="example-title">Example: Identifying Program Purpose</h4>
+            <p><strong>Innovation:</strong> A mobile navigation app</p>
+            <p><strong>Purpose:</strong> To help users navigate from one location to another efficiently by providing directions, estimated travel times, and real-time traffic updates.</p>
+            <p><strong>Categories:</strong> Automation (routing calculations), Data Analysis (traffic patterns), Information Access (maps and directions)</p>
+            <p><strong>User Need:</strong> Helps users solve the problem of finding efficient routes in unfamiliar areas or during changing traffic conditions.</p>
+          </div>
+
+          <p>It's important to note that many computing innovations have multiple purposes or may be used in ways not initially intended by their developers. The primary purpose, however, is usually reflected in the core functionality and features of the program.</p>
+        </div>
+      </section>
+
+      <!-- Inputs and Outputs Section -->
+      <section class="content-section" id="input-output">
+        <h2 class="section-title">Understanding Inputs and Outputs</h2>
+        <div class="section-content">
+          <p>One way to understand how a program functions is to identify its inputs and outputs. This input-process-output model provides a high-level view of a program's behavior and helps clarify its purpose.</p>
+
+          <h4>Inputs</h4>
+          <p>Inputs are the data that a program receives and processes. They can come from various sources:</p>
+          <ul>
+            <li><strong>User inputs</strong>: Text entered in a form, button clicks, voice commands</li>
+            <li><strong>File inputs</strong>: Data read from files, databases, or other storage media</li>
+            <li><strong>Sensor inputs</strong>: Data from hardware sensors like GPS, camera, or microphone</li>
+            <li><strong>Network inputs</strong>: Data received from the internet or other networked devices</li>
+            <li><strong>System inputs</strong>: Data from the operating system, like time or device information</li>
+          </ul>
+
+          <h4>Processing</h4>
+          <p>Processing refers to the operations and transformations that the program performs on the inputs to produce the outputs. This includes algorithms, calculations, data manipulations, and decision-making logic.</p>
+
+          <h4>Outputs</h4>
+          <p>Outputs are the results produced by the program after processing the inputs. Outputs can take many forms:</p>
+          <ul>
+            <li><strong>Visual outputs</strong>: Text, images, videos displayed on a screen</li>
+            <li><strong>Audio outputs</strong>: Sounds, music, spoken words</li>
+            <li><strong>File outputs</strong>: Data written to files, databases, or other storage media</li>
+            <li><strong>Network outputs</strong>: Data sent to other devices or services</li>
+            <li><strong>Physical outputs</strong>: Actions performed by hardware (e.g., printing a document)</li>
+          </ul>
+
+          <div class="diagram">
+            <h4 class="diagram-title">Input-Process-Output Model</h4>
+            <div class="image-container">
+              <img src="/api/placeholder/600/150" alt="Diagram showing Input → Process → Output flow with examples">
+            </div>
+          </div>
+
+          <div class="example-box">
+            <h4 class="example-title">Example: Input-Process-Output in a Temperature Conversion App</h4>
+            <p>Let's analyze a simple temperature conversion app that converts Celsius to Fahrenheit:</p>
+            <div class="code-example">
+// Temperature conversion program
+function convertToFahrenheit(celsius) {
+  let fahrenheit = (celsius * 9/5) + 32;
+  return fahrenheit;
+}
+
+// Get temperature from user
+let userTemp = prompt("Enter temperature in Celsius:");
+let result = convertToFahrenheit(Number(userTemp));
+alert("Temperature in Fahrenheit: " + result);
+            </div>
+            <p><strong>Input:</strong> The Celsius temperature entered by the user via the prompt dialog</p>
+            <p><strong>Processing:</strong> The conversion calculation (celsius * 9/5) + 32</p>
+            <p><strong>Output:</strong> The Fahrenheit temperature displayed in an alert dialog</p>
+          </div>
+
+          <p>By identifying the inputs and outputs of a program, we can better understand its functionality and purpose. This analysis also helps in determining whether a program is meeting its intended goals and provides a framework for improving its effectiveness.</p>
+        </div>
+      </section>
+
+      <!-- Program Components Section -->
+      <section class="content-section" id="program-components">
+        <h2 class="section-title">Identifying Program Components</h2>
+        <div class="section-content">
+          <p>Programs are composed of multiple components that work together to achieve the desired functionality. Understanding these components helps in analyzing how a program functions and how its statements correspond to its purpose.</p>
+
+          <h4>Common Program Components</h4>
+
+          <p><strong>1. Variables and Data Structures</strong></p>
+          <p>Variables store data that the program needs to operate. The types of variables and data structures used often reflect the program's purpose:</p>
+          <ul>
+            <li>A text editor uses string variables to store and manipulate text</li>
+            <li>A physics simulation uses numerical variables to track position, velocity, etc.</li>
+            <li>A contact management app uses arrays or objects to organize contact information</li>
+          </ul>
+
+          <p><strong>2. Functions and Methods</strong></p>
+          <p>Functions are blocks of code that perform specific tasks. Each function typically serves a distinct purpose that contributes to the overall program functionality:</p>
+          <ul>
+            <li>A calculation function in a calculator app</li>
+            <li>A search function in a database application</li>
+            <li>A rendering function in a graphics program</li>
+          </ul>
+
+          <p><strong>3. Control Structures</strong></p>
+          <p>Control structures determine the flow of execution in a program and include:</p>
+          <ul>
+            <li><strong>Sequence</strong>: Instructions executed in order</li>
+            <li><strong>Selection</strong>: Decision-making using if-else statements, switch cases, etc.</li>
+            <li><strong>Iteration</strong>: Loops that repeat code blocks (for loops, while loops, etc.)</li>
+          </ul>
+
+          <p><strong>4. User Interface Components</strong></p>
+          <p>These components facilitate interaction between the user and the program:</p>
+          <ul>
+            <li>Input fields, buttons, and forms for receiving user input</li>
+            <li>Display elements for presenting information to the user</li>
+            <li>Navigation menus for moving between different parts of the application</li>
+          </ul>
+
+          <p><strong>5. External Interfaces</strong></p>
+          <p>Many programs interact with external systems:</p>
+          <ul>
+            <li>File I/O for reading from and writing to files</li>
+            <li>Network interfaces for communicating with other devices or services</li>
+            <li>APIs for accessing functionalities provided by other software</li>
+          </ul>
+
+          <div class="example-box">
+            <h4 class="example-title">Example: Components of a To-Do List Application</h4>
+            <p>Let's identify the main components of a simple to-do list application:</p>
+            <div class="code-example">
+// Data structure for tasks
+let tasks = [];
+
+// Function to add a new task
+function addTask(description, dueDate) {
+  const task = {
+    id: Date.now(),
+    description: description,
+    dueDate: dueDate,
+    completed: false
+  };
+  tasks.push(task);
+  displayTasks();
+}
+
+// Function to toggle task completion status
+function toggleTaskStatus(taskId) {
+  const task = tasks.find(t => t.id === taskId);
+  if (task) {
+    task.completed = !task.completed;
+    displayTasks();
+  }
+}
+
+// Function to display tasks
+function displayTasks() {
+  const taskList = document.getElementById('task-list');
+  taskList.innerHTML = '';
+
+  tasks.forEach(task => {
+    const taskElement = document.createElement('li');
+    taskElement.textContent = task.description + ' (Due: ' + task.dueDate + ')';
+
+    if (task.completed) {
+      taskElement.style.textDecoration = 'line-through';
+    }
+
+    taskElement.addEventListener('click', () => toggleTaskStatus(task.id));
+    taskList.appendChild(taskElement);
+  });
+}
+
+// Event handler for the new task form
+document.getElementById('new-task-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const description = document.getElementById('task-description').value;
+  const dueDate = document.getElementById('task-due-date').value;
+  addTask(description, dueDate);
+  this.reset();
+});
+            </div>
+            <p><strong>Components:</strong></p>
+            <ul>
+              <li><strong>Data Structure</strong>: The 'tasks' array that stores task objects with properties for id, description, due date, and completion status</li>
+              <li><strong>Functions</strong>: addTask, toggleTaskStatus, and displayTasks, each handling a specific aspect of the application's functionality</li>
+              <li><strong>Event Handlers</strong>: Code that responds to user actions like form submission and clicking on tasks</li>
+              <li><strong>User Interface Manipulation</strong>: Code that updates the display to reflect the current state of tasks</li>
+            </ul>
+          </div>
+
+          <p>By breaking down a program into its components, we can better understand how it functions and how each part contributes to its overall purpose. This decomposition also makes it easier to analyze, modify, and improve the program.</p>
+        </div>
+      </section>
+
+      <!-- Mapping Statements to Purpose Section -->
+      <section class="content-section" id="mapping-statements">
+        <h2 class="section-title">Mapping Program Statements to Purpose</h2>
+        <div class="section-content">
+          <p>Each statement or instruction in a program contributes in some way to achieving the program's overall purpose. Understanding this connection between individual program statements and the program's purpose is essential for effective program analysis and development.</p>
+
+          <h4>How Program Statements Contribute to Purpose</h4>
+
+          <p><strong>1. Direct Functionality</strong></p>
+          <p>Some statements directly implement core functionalities that fulfill the program's primary purpose:</p>
+          <ul>
+            <li>The calculation formula in a calculator app</li>
+            <li>The filtering algorithm in a search engine</li>
+            <li>The drawing commands in a graphics application</li>
+          </ul>
+
+          <p><strong>2. Supporting Operations</strong></p>
+          <p>Other statements provide necessary support for the core functionality:</p>
+          <ul>
+            <li>Input validation to ensure data integrity</li>
+            <li>Data conversion to prepare inputs for processing</li>
+            <li>Temporary data storage during multi-step operations</li>
+          </ul>
+
+          <p><strong>3. User Experience Enhancement</strong></p>
+          <p>Some statements improve the user's interaction with the program:</p>
+          <ul>
+            <li>User interface updates and animations</li>
+            <li>Error messages and user guidance</li>
+            <li>Accessibility features for diverse users</li>
+          </ul>
+
+          <p><strong>4. Program Flow Control</strong></p>
+          <p>Control structures direct the program's execution path:</p>
+          <ul>
+            <li>Conditional statements that implement business logic</li>
+            <li>Loops that process collections of data</li>
+            <li>Function calls that organize program flow</li>
+          </ul>
+
+          <div class="note-box">
+            <h4 class="note-title">AP Exam Tip</h4>
+            <p>For the AP CSP exam, you should be able to look at a piece of code and explain how specific statements or blocks contribute to the program's intended purpose. You might be asked to trace through code execution and describe what each statement does in the context of the program's overall goal.</p>
+          </div>
+
+          <div class="example-box">
+            <h4 class="example-title">Example: Mapping Statements to Purpose in a Weather App</h4>
+            <p>Consider this simplified code for a weather application that fetches and displays weather data:</p>
+            <div class="code-example">
+// Purpose: Display current weather conditions for a user-specified location
+
+// Get user's location
+function getUserLocation() {
+  // Ask for permission to access location
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      // On success, fetch weather data for this location
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      fetchWeatherData(lat, lon);
+    },
+    error => {
+      // On error, ask user to enter location manually
+      document.getElementById('location-form').style.display = 'block';
+    }
+  );
+}
+
+// Fetch weather data from API
+function fetchWeatherData(lat, lon) {
+  const apiKey = 'abc123'; // API key for weather service
+  const url = `https://api.weather.service/data?lat=${lat}&lon=${lon}&apiKey=${apiKey}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      // Process and display the weather data
+      displayWeatherData(data);
+    })
+    .catch(error => {
+      // Handle errors in fetching data
+      displayError("Could not fetch weather data. Please try again later.");
+    });
+}
+
+// Display weather information to user
+function displayWeatherData(data) {
+  const weatherDisplay = document.getElementById('weather-display');
+
+  // Extract relevant information
+  const temperature = data.current.temp;
+  const condition = data.current.condition;
+  const humidity = data.current.humidity;
+
+  // Update the display
+  weatherDisplay.innerHTML = `
+    <h2>Current Weather</h2>
+    <p>Temperature: ${temperature}°C</p>
+    <p>Condition: ${condition}</p>
+    <p>Humidity: ${humidity}%</p>
+  `;
+}
+
+// Display an error message
+function displayError(message) {
+  const weatherDisplay = document.getElementById('weather-display');
+  weatherDisplay.innerHTML = `<p class="error">${message}</p>`;
+}
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+  getUserLocation();
+
+  // Set up manual location input form
+  document.getElementById('location-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const location = document.getElementById('location-input').value;
+    // Convert location name to coordinates and fetch weather
+    // (Implementation details omitted for brevity)
+  });
+});
+            </div>
+            <p><strong>Mapping statements to purpose:</strong></p>
+            <ul>
+              <li><strong>getUserLocation()</strong>: This function directly supports the app's purpose by determining the user's location, which is essential for providing relevant weather information.</li>
+              <li><strong>fetchWeatherData(lat, lon)</strong>: This function is core to the app's purpose as it retrieves the actual weather data for display.</li>
+              <li><strong>displayWeatherData(data)</strong>: This function fulfills the app's purpose by presenting the weather information to the user in a readable format.</li>
+              <li><strong>displayError(message)</strong>: This function enhances user experience by providing feedback when the app cannot fulfill its primary purpose.</li>
+              <li><strong>Event listener for manual location input</strong>: This provides an alternative way to fulfill the app's purpose when automatic location detection fails.</li>
+            </ul>
+          </div>
+
+          <p>When analyzing programs, it's helpful to trace through the code and identify how each statement or block contributes to the program's overall purpose. This practice not only deepens understanding of the program but also helps in identifying potential improvements or bugs that might prevent the program from fulfilling its intended purpose effectively.</p>
+        </div>
+      </section>
+
+      <!-- Summary Section -->
+      <section class="content-section" id="summary">
+        <h2 class="section-title">Summary</h2>
+        <div class="section-content">
+          <p>In this topic, we've explored the fundamental concepts of program function and purpose:</p>
+
+          <ul>
+            <li><strong>Program Purpose</strong>: The intended goal or problem that a program aims to solve. This can range from automating tasks to analyzing data to facilitating communication.</li>
+            <li><strong>Input-Process-Output</strong>: A model for understanding how programs function by identifying what data they receive, how they transform it, and what results they produce.</li>
+            <li><strong>Program Components</strong>: The building blocks of a program, including variables, functions, control structures, and interfaces, each contributing to the overall functionality.</li>
+            <li><strong>Mapping Statements to Purpose</strong>: The practice of tracing how specific program statements or blocks contribute to achieving the program's intended purpose.</li>
+          </ul>
+
+          <p>Understanding a program's function and purpose is essential for both users and developers. For users, it helps in selecting the right tool and using it effectively. For developers, it provides a clear direction for development and a basis for evaluating the program's effectiveness.</p>
+
+          <p>When analyzing programs, consider both the high-level purpose and the low-level implementation details. This dual perspective allows for a comprehensive understanding of how the program works and how well it achieves its intended goals.</p>
+
+          <div class="note-box">
+            <h4 class="note-title">Key Takeaway</h4>
+            <p>Every program is designed with a specific purpose in mind, and every statement in the program should contribute in some way to fulfilling that purpose. By understanding this relationship between purpose and implementation, you can better analyze, design, and evaluate computing innovations.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation Buttons -->
+      <div class="navigation-buttons">
+        <a href="topic-1-1.html" class="btn">Previous: Collaboration</a>
+        <a href="topic-1-2-quiz.html" class="btn btn-secondary">Take Topic Quiz</a>
+        <a href="topic-1-3.html" class="btn btn-next">Next: Program Design and Development</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100,
+            behavior: 'smooth'
+          });
+
+          // Update active class for menu links
+          document.querySelectorAll('.menu-link').forEach(link => {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Highlight menu items on scroll
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.content-section');
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 150;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        const scrollPosition = window.scrollY;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          const id = section.getAttribute('id');
+          document.querySelectorAll('.menu-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+
+    // Logout functionality
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      // Clear any session data
+      sessionStorage.removeItem('loggedIn');
+      // Redirect to login page
+      window.location.href = 'index.html';
+    });
+
+    // Ensure user is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!sessionStorage.getItem('loggedIn')) {
+        // If not logged in, redirect to login
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP CSP - Topic 1.1: Collaboration</title>
+  <style>
+    :root {
+      --primary: #4a2c8f;
+      --primary-light: #6b45c2;
+      --primary-dark: #36206a;
+      --secondary: #ff7b00;
+      --secondary-light: #ff9a3f;
+      --secondary-dark: #cc6200;
+      --white: #ffffff;
+      --light: #f5f5f5;
+      --gray: #e0e0e0;
+      --dark: #333333;
+      --success: #28a745;
+      --success-light: #d4edda;
+      --success-border: #c3e6cb;
+      --danger: #dc3545;
+      --danger-light: #f8d7da;
+      --danger-border: #f5c6cb;
+      --warning: #ffc107;
+      --warning-light: #fff3cd;
+      --info: #17a2b8;
+      --info-light: #d1ecf1;
+      --info-border: #bee5eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: var(--light);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .navbar-btn {
+      background-color: transparent;
+      border: 2px solid var(--white);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .navbar-btn:hover {
+      background-color: var(--white);
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 20px;
+      display: flex;
+      gap: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 150px);
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sidebar-header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px;
+      border-bottom: 5px solid var(--secondary);
+    }
+
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .sidebar-menu {
+      padding: 20px;
+      overflow-y: auto;
+      height: calc(100% - 100px);
+    }
+
+    .menu-section {
+      margin-bottom: 20px;
+    }
+
+    .menu-section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .menu-list {
+      list-style-type: none;
+    }
+
+    .menu-item {
+      margin-bottom: 10px;
+    }
+
+    .menu-link {
+      display: block;
+      padding: 8px 10px;
+      color: var(--dark);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .menu-link:hover {
+      background-color: var(--light);
+      color: var(--primary);
+    }
+
+    .menu-link.active {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      animation: fadeIn 0.6s ease;
+      animation-delay: 0.1s;
+      animation-fill-mode: both;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+      margin: 0 10px;
+      color: var(--gray);
+    }
+
+    .topic-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .topic-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .topic-overview {
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+
+    .learning-objectives {
+      background-color: var(--info-light);
+      border-left: 5px solid var(--info);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+
+    .learning-objectives h3 {
+      color: var(--info);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .objectives-list {
+      list-style-type: none;
+    }
+
+    .objectives-list li {
+      margin-bottom: 10px;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .objectives-list li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--info);
+      font-weight: bold;
+    }
+
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .section-content p {
+      margin-bottom: 15px;
+    }
+
+    .section-content h4 {
+      font-size: 1.2rem;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      margin-top: 25px;
+    }
+
+    .info-card {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 5px solid var(--primary);
+    }
+
+    .info-card h4 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .example-box {
+      background-color: var(--success-light);
+      border-left: 5px solid var(--success);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .example-title {
+      color: var(--success);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .note-box {
+      background-color: var(--warning-light);
+      border-left: 5px solid var(--warning);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .note-title {
+      color: var(--warning);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-light);
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--gray);
+    }
+
+    .btn-next {
+      margin-left: auto;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .image-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .caption {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .table-container {
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    th {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--light);
+    }
+
+    tr:hover {
+      background-color: var(--gray);
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        margin-bottom: 30px;
+      }
+
+      .sidebar-menu {
+        height: auto;
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin-top: 80px;
+      }
+
+      .navbar {
+        padding: 12px 20px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .topic-title {
+        font-size: 1.8rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .navigation-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn-next {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">AP CSP Quiz Platform</div>
+    <div class="navbar-actions">
+      <a href="big-idea-1.html" class="navbar-btn">Back to Big Idea 1</a>
+      <a href="main-menu.html" class="navbar-btn">Main Menu</a>
+      <button class="navbar-btn" id="logout-btn">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Topic 1.1</div>
+        <div class="sidebar-subtitle">Collaboration</div>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-section">
+          <h3 class="menu-section-title">Content</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="#introduction" class="menu-link active">Introduction</a></li>
+            <li class="menu-item"><a href="#collaboration-benefits" class="menu-link">Benefits of Collaboration</a></li>
+            <li class="menu-item"><a href="#diverse-perspectives" class="menu-link">Diverse Perspectives</a></li>
+            <li class="menu-item"><a href="#collaboration-strategies" class="menu-link">Collaboration Strategies</a></li>
+            <li class="menu-item"><a href="#collaboration-tools" class="menu-link">Collaboration Tools</a></li>
+            <li class="menu-item"><a href="#summary" class="menu-link">Summary</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Practice</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-1-quiz.html" class="menu-link">Take Quiz</a></li>
+            <li class="menu-item"><a href="topic-1-1-practice.html" class="menu-link">Practice Exercises</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Related Topics</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-2.html" class="menu-link">1.2 Program Function and Purpose</a></li>
+            <li class="menu-item"><a href="topic-1-3.html" class="menu-link">1.3 Program Design and Development</a></li>
+            <li class="menu-item"><a href="topic-1-4.html" class="menu-link">1.4 Identifying and Correcting Errors</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="breadcrumb">
+        <a href="main-menu.html">Main Menu</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="big-idea-1.html">Big Idea 1</a>
+        <span class="breadcrumb-separator">›</span>
+        <span>Topic 1.1: Collaboration</span>
+      </div>
+
+      <div class="topic-header">
+        <h1 class="topic-title">Collaboration in Computing</h1>
+        <p class="topic-overview">Learn how effective collaboration strategies and diverse perspectives contribute to the development of computing innovations and help solve complex problems.</p>
+
+        <div class="learning-objectives">
+          <h3>Learning Objectives</h3>
+          <ul class="objectives-list">
+            <li>Explain how computing innovations are improved through collaboration (CRD-1.A)</li>
+            <li>Demonstrate how diverse perspectives in developing computing innovations help avoid bias (CRD-1.B)</li>
+            <li>Describe collaboration strategies and tools for program development (CRD-1.C)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Introduction Section -->
+      <section class="content-section" id="introduction">
+        <h2 class="section-title">Introduction to Collaboration</h2>
+        <div class="section-content">
+          <p>Collaboration is a fundamental aspect of computer science and is essential for developing effective computing innovations. In today's complex technological landscape, most significant software projects require teams of developers with diverse skills and perspectives working together.</p>
+
+          <p>When we think about major software applications, operating systems, or websites, it's important to recognize that these were not created by individuals working alone. Teams of developers, designers, project managers, and other specialists collaborate to create, test, and refine these products.</p>
+
+          <div class="info-card">
+            <h4>Key Definition</h4>
+            <p><strong>Collaboration</strong> in computing refers to the process where multiple individuals work together to develop computing innovations by combining their diverse perspectives, skills, and experiences.</p>
+          </div>
+
+          <div class="image-container">
+            <img src="/api/placeholder/600/300" alt="A diverse team collaborating on software development">
+            <p class="caption">Figure 1: Collaboration brings together individuals with different skills and perspectives.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits of Collaboration Section -->
+      <section class="content-section" id="collaboration-benefits">
+        <h2 class="section-title">Benefits of Collaboration</h2>
+        <div class="section-content">
+          <p>Collaboration offers numerous benefits in the development of computing innovations, from improving the quality of the final product to making the development process more efficient.</p>
+
+          <h4>Improved Problem-Solving</h4>
+          <p>When individuals with different backgrounds and expertise collaborate, they bring multiple perspectives to problem-solving. This diversity of thought often leads to innovative solutions that might not emerge from a single person working alone.</p>
+
+          <h4>Enhanced Productivity</h4>
+          <p>Collaboration allows for the division of complex tasks into smaller, manageable components that can be worked on simultaneously by different team members. This parallel development approach can significantly reduce the time required to complete a project.</p>
+
+          <h4>Knowledge Sharing and Skill Development</h4>
+          <p>Team members can learn from each other's expertise, techniques, and approaches. This knowledge sharing enhances individual skills and contributes to the overall growth of the team.</p>
+
+          <h4>Reduced Errors and Improved Quality</h4>
+          <p>With multiple people reviewing code and testing functionality, errors are more likely to be caught and corrected before they become problematic. This collaborative review process leads to higher quality software with fewer bugs.</p>
+
+          <div class="example-box">
+            <h4 class="example-title">Real-World Example: Linux Operating System</h4>
+            <p>Linux is one of the most successful examples of collaborative software development. Initially created by Linus Torvalds in 1991, it has grown into a massive project with thousands of contributors worldwide. Developers from different backgrounds, cultures, and organizations contribute code, identify bugs, and suggest improvements. This collaborative approach has made Linux one of the most robust and widely-used operating systems, powering everything from smartphones to supercomputers.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Diverse Perspectives Section -->
+      <section class="content-section" id="diverse-perspectives">
+        <h2 class="section-title">Diverse Perspectives in Computing</h2>
+        <div class="section-content">
+          <p>Incorporating diverse perspectives in the development of computing innovations is crucial for creating products that address the needs of a wide range of users and avoid potential biases.</p>
+
+          <h4>Avoiding Bias in Computing Innovations</h4>
+          <p>When development teams lack diversity, their products may unintentionally incorporate biases that reflect the limited perspectives of the team. These biases can manifest in various ways, such as:</p>
+
+          <ul>
+            <li>Designing user interfaces that work well for some populations but create barriers for others</li>
+            <li>Developing algorithms that produce biased results because of biased training data</li>
+            <li>Creating products that fail to address the needs of certain groups of users</li>
+          </ul>
+
+          <p>By including individuals with diverse backgrounds, experiences, and viewpoints in the development process, teams can identify and address potential biases early on.</p>
+
+          <div class="note-box">
+            <h4 class="note-title">Important Note</h4>
+            <p>Diversity in computing includes considerations of race, gender, age, ability, socioeconomic status, geographic location, and many other factors. Each perspective brings valuable insights to the development process.</p>
+          </div>
+
+          <h4>Examples of How Diverse Perspectives Improve Computing Innovations</h4>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Aspect of Diversity</th>
+                  <th>Potential Contribution to Computing Innovation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cultural Diversity</td>
+                  <td>Ensuring that applications are culturally appropriate and accessible in different regions</td>
+                </tr>
+                <tr>
+                  <td>Accessibility Perspectives</td>
+                  <td>Creating features that make products usable for people with various abilities</td>
+                </tr>
+                <tr>
+                  <td>Age Diversity</td>
+                  <td>Designing interfaces that work well for users across different age groups</td>
+                </tr>
+                <tr>
+                  <td>Geographic Diversity</td>
+                  <td>Adapting applications to work in areas with different infrastructure and resources</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collaboration Strategies Section -->
+      <section class="content-section" id="collaboration-strategies">
+        <h2 class="section-title">Effective Collaboration Strategies</h2>
+        <div class="section-content">
+          <p>Successful collaboration in computing requires intentional strategies and practices. Some of the most effective approaches include:</p>
+
+          <h4>Pair Programming</h4>
+          <p>Pair programming is a technique where two programmers work together at one workstation. One programmer (the driver) writes the code, while the other (the navigator) reviews each line as it's written, considering the strategic direction and identifying potential issues. This approach promotes knowledge sharing, reduces errors, and can improve code quality.</p>
+
+          <h4>Code Reviews</h4>
+          <p>Code reviews involve systematic examination of code by peers to identify bugs, ensure code quality, and share knowledge. This practice helps maintain consistent coding standards and allows team members to learn from each other's techniques and approaches.</p>
+
+          <h4>Agile Development</h4>
+          <p>Agile methodologies emphasize collaborative, iterative development with frequent reassessment and adaptation. Techniques like daily stand-up meetings, sprint planning, and retrospectives promote ongoing communication and collaboration among team members.</p>
+
+          <h4>Clear Communication Channels</h4>
+          <p>Establishing clear channels for communication, such as regular meetings, documentation standards, and messaging platforms, ensures that team members can effectively share ideas, provide updates, and address challenges.</p>
+
+          <div class="example-box">
+            <h4 class="example-title">Collaboration in Action: Open Source Development</h4>
+            <p>Open source software development is a prime example of large-scale collaboration. Projects like Mozilla Firefox, WordPress, and Python are developed by communities of contributors who may never meet in person but collaborate effectively through online tools and established contribution processes. These projects often implement practices like code reviews, comprehensive documentation, and clear contribution guidelines to facilitate collaboration among diverse, distributed teams.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collaboration Tools Section -->
+      <section class="content-section" id="collaboration-tools">
+        <h2 class="section-title">Collaboration Tools in Computing</h2>
+        <div class="section-content">
+          <p>Modern software development relies on a variety of tools designed to facilitate collaboration among team members, whether they're in the same office or distributed across the globe.</p>
+
+          <h4>Version Control Systems</h4>
+          <p>Version control systems like Git, SVN, and Mercurial allow multiple developers to work on the same codebase simultaneously without overwriting each other's changes. These tools track modifications, manage different versions, and help resolve conflicts when they arise.</p>
+
+          <p>Platforms built around these systems, such as GitHub, GitLab, and Bitbucket, add features like issue tracking, pull requests, and code review capabilities, further enhancing collaboration.</p>
+
+          <h4>Project Management Tools</h4>
+          <p>Tools like Jira, Trello, and Asana help teams organize tasks, track progress, and manage workflows. These platforms allow for the assignment of responsibilities, setting of deadlines, and monitoring of project status, ensuring that everyone knows what they need to work on and when.</p>
+
+          <h4>Communication Platforms</h4>
+          <p>Slack, Microsoft Teams, and similar platforms provide real-time messaging, file sharing, and video conferencing capabilities. These tools facilitate ongoing communication and help break down barriers between team members, especially in distributed teams.</p>
+
+          <h4>Collaborative Development Environments</h4>
+          <p>Tools like Visual Studio Live Share, CodePen, and Replit allow developers to code together in real-time, facilitating pair programming and collaborative debugging even when team members are not physically co-located.</p>
+
+          <div class="note-box">
+            <h4 class="note-title">AP Exam Tip</h4>
+            <p>For the AP CSP exam, you should be able to identify different collaboration tools and strategies, and explain how they contribute to the development of computing innovations. You may be asked to analyze scenarios involving collaboration or suggest appropriate collaboration approaches for specific development contexts.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary Section -->
+      <section class="content-section" id="summary">
+        <h2 class="section-title">Summary</h2>
+        <div class="section-content">
+          <p>Collaboration is a cornerstone of modern software development and computing innovation. By bringing together individuals with diverse skills, perspectives, and backgrounds, collaborative approaches can lead to more effective, inclusive, and innovative computing solutions.</p>
+
+          <p>Key takeaways from this topic include:</p>
+
+          <ul>
+            <li>Collaboration improves computing innovations by combining diverse perspectives, enhancing problem-solving, and reducing errors</li>
+            <li>Diverse teams are better equipped to identify and address potential biases in computing products</li>
+            <li>Effective collaboration strategies, such as pair programming, code reviews, and agile development, facilitate productive teamwork</li>
+            <li>Modern collaboration tools, including version control systems, project management platforms, and communication tools, support distributed and co-located teams</li>
+          </ul>
+
+          <p>As you continue your study of computer science, remember that many of the most significant computing innovations were the result of collaborative efforts, and the ability to work effectively with others is a valuable skill in the field.</p>
+        </div>
+      </section>
+
+      <!-- Navigation Buttons -->
+      <div class="navigation-buttons">
+        <a href="big-idea-1.html" class="btn">Back to Big Idea 1</a>
+        <a href="topic-1-1-quiz.html" class="btn btn-secondary">Take Topic Quiz</a>
+        <a href="topic-1-2.html" class="btn btn-next">Next: Program Function and Purpose</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100,
+            behavior: 'smooth'
+          });
+
+          // Update active class for menu links
+          document.querySelectorAll('.menu-link').forEach(link => {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Highlight menu items on scroll
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.content-section');
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 150;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        const scrollPosition = window.scrollY;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          const id = section.getAttribute('id');
+          document.querySelectorAll('.menu-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+
+    // Logout functionality
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      // Clear any session data
+      sessionStorage.removeItem('loggedIn');
+      // Redirect to login page
+      window.location.href = 'index.html';
+    });
+
+    // Ensure user is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!sessionStorage.getItem('loggedIn')) {
+        // If not logged in, redirect to login
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>

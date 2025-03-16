@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP CSP - Big Idea 1: Progress Check</title>
+  <style>
+    :root {
+      --primary: #4a2c8f;
+      --primary-light: #6b45c2;
+      --primary-dark: #36206a;
+      --secondary: #ff7b00;
+      --secondary-light: #ff9a3f;
+      --secondary-dark: #cc6200;
+      --white: #ffffff;
+      --light: #f5f5f5;
+      --gray: #e0e0e0;
+      --dark: #333333;
+      --success: #28a745;
+      --success-light: #d4edda;
+      --success-border: #c3e6cb;
+      --danger: #dc3545;
+      --danger-light: #f8d7da;
+      --danger-border: #f5c6cb;
+      --warning: #ffc107;
+      --warning-light: #fff3cd;
+      --info: #17a2b8;
+      --info-light: #d1ecf1;
+      --info-border: #bee5eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: var(--light);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .navbar-btn {
+      background-color: transparent;
+      border: 2px solid var(--white);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .navbar-btn:hover {
+      background-color: var(--white);
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 100px auto 50px;
+      padding: 20px;
+    }
+
+    .quiz-header {
+      background-color: var(--white);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quiz-header::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 150px;
+      height: 150px;
+      background-color: rgba(74, 44, 143, 0.1);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .quiz-header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      left: -40px;
+      width: 200px;
+      height: 200px;
+      background-color: rgba(255, 123, 0, 0.1);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .quiz-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quiz-description {
+      color: var(--dark);
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quiz-info {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-icon {
+      background-color: var(--primary-light);
+      color: var(--white);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .info-text {
+      font-size: 0.95rem;
+    }
+
+    .info-text strong {
+      display: block;
+      color: var(--primary-dark);
+    }
+
+    .timer-container {
+      background-color: var(--primary-light);
+      color: var(--white);
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background-color: var(--white);
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      animation: fadeIn 0.6s ease;
+      animation-delay: 0.1s;
+      animation-fill-mode: both;
+    }
+
+    .progress-container {
+      flex-grow: 1;
+      margin-right: 20px;
+    }
+
+    .question-counter {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-dark);
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: var(--gray);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-content {
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      margin-bottom: 30px;
+      animation: fadeIn 0.6s ease;
+      animation-delay: 0.2s;
+      animation-fill-mode: both;
+    }
+
+    .question-container {
+      margin-bottom: 30px;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+    }
+
+    .code-example {
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      border-left: 4px solid var(--primary);
+      white-space: pre;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      background-color: var(--light);
+      border: 2px solid var(--gray);
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .option:hover {
+      background-color: #efefef;
+      transform: translateX(5px);
+    }
+
+    .option input[type="checkbox"],
+    .option input[type="radio"] {
+      margin-right: 15px;
+      transform: scale(1.2);
+    }
+
+    .option-label {
+      flex-grow: 1;
+    }
+
+    .option-selected {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+      color: var(--white);
+    }
+
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .feedback.correct {
+      background-color: var(--success-light);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+    }
+
+    .feedback.incorrect {
+      background-color: var(--danger-light);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+    }
+
+    .explanation {
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray);
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      background-color: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-submit {
+      background-color: var(--secondary);
+    }
+
+    .btn-submit:hover {
+      background-color: var(--secondary-light);
+    }
+
+    .results {
+      background-color: var(--white);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      display: none;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .results-header {
+      margin-bottom: 30px;
+    }
+
+    .results-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .results-subtitle {
+      color: var(--dark);
+    }
+
+    .score-container {
+      background-color: var(--light);
+      border-radius: 50%;
+      width: 180px;
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 30px;
+      border: 8px solid var(--primary-light);
+    }
+
+    .score-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .score-text {
+      font-size: 1.1rem;
+      color: var(--primary-dark);
+    }
+
+    .score-details {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .detail-item {
+      background-color: var(--light);
+      padding: 15px 25px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .detail-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .detail-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .feedback-section {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .feedback-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .feedback-item {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .feedback-question {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+
+    .feedback-answer {
+      margin-bottom: 15px;
+    }
+
+    .feedback-explanation {
+      padding: 15px;
+      border-radius: 8px;
+      font-style: italic;
+    }
+
+    .feedback-correct {
+      background-color: var(--success-light);
+      color: var(--success);
+    }
+
+    .feedback-incorrect {
+      background-color: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .topics-breakdown {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .topics-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .topic-performance {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .topic-name {
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .topic-score {
+      color: var(--primary);
+    }
+
+    .topic-bar-container {
+      height: 10px;
+      background-color: var(--gray);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .topic-bar {
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 5px;
+    }
+
+    .topic-excellent .topic-bar {
+      background-color: var(--success);
+    }
+
+    .topic-good .topic-bar {
+      background-color: var(--secondary);
+    }
+
+    .topic-needs-work .topic-bar {
+      background-color: var(--danger);
+    }
+
+    .certificate {
+      background-color: var(--white);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 30px;
+      margin-top: 40px;
+      position: relative;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .certificate::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px solid var(--primary-light);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .certificate-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .certificate-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .certificate-subtitle {
+      font-size: 1.2rem;
+      color: var(--secondary);
+    }
+
+    .certificate-body {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .certificate-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .certificate-date {
+      font-style: italic;
+      color: #666;
+    }
+
+    .certificate-footer {
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin-top: 80px;
+      }
+
+      .navbar {
+        padding: 12px 20px;
+      }
+
+      .quiz-header, .quiz-content, .results {
+        padding: 20px;
+      }
+
+      .quiz-title {
+        font-size: 1.6rem;
+      }
+
+      .quiz-info {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .score-container {
+        width: 150px;
+        height: 150px;
+      }
+
+      .score-value {
+        font-size: 2rem;
+      }
+
+      .navigation {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">AP CSP Quiz Platform</div>
+    <div class="navbar-actions">
+      <a href="big-idea-1.html" class="navbar-btn">Back to Big Idea 1</a>
+      <a href="main-menu.html" class="navbar-btn">Main Menu</a>
+      <button class="navbar-btn" id="logout-btn">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+      <h1 class="quiz-title">Big Idea 1: Creative Development</h1>
+      <p class="quiz-description">This comprehensive assessment evaluates your understanding of all topics within Big Idea 1, including collaboration, program function and purpose, program design and development, and identifying and correcting errors.</p>
+
+      <div class="quiz-info">
+        <div class="info-item">
+          <div class="info-icon">Q</div>
+          <div class="info-text">
+            <strong>20 Questions</strong>
+            16 single answer, 4 dual answer
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">T</div>
+          <div class="info-text">
+            <strong>Time Limit</strong>
+            45 minutes
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">P</div>
+          <div class="info-text">
+            <strong>Passing Score</strong>
+            70% or higher
+          </div>
+        </div>
+      </div>
+
+      <div class="timer-container" id="timer">Time: 45:00</div>
+    </div>
+
+    <!-- Quiz Progress -->
+    <div class="stats-container">
+      <div class="progress-container">
+        <div class="question-counter">Question <span id="current-question">1</span> of <span id="total-questions">20</span></div>
+        <div class="progress-bar">
+          <div class="progress" id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Content -->
+    <div class="quiz-content" id="quiz-container">
+      <!-- Question 1: Topic 1.1 Collaboration - Single-choice -->
+      <div class="question-container" id="q1">
+        <div class="question">1. Which of the following best describes the value of collaboration in developing computing innovations?</div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="q1" value="a">
+            <span class="option-label">It reduces the need for documentation by dividing responsibilities</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q1" value="b">
+            <span class="option-label">It ensures that the most experienced team member makes all decisions</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q1" value="c">
+            <span class="option-label">It incorporates diverse perspectives, resulting in a more inclusive computing innovation</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q1" value="d">
+            <span class="option-label">It eliminates the need for testing since multiple people have reviewed the code</span>
+          </label>
+        </div>
+        <div class="feedback" id="feedback1"></div>
+      </div>
+
+      <!-- Question 2: Topic 1.1 Collaboration - Multiple-choice (2 answers) -->
+      <div class="question-container" id="q2" style="display: none;">
+        <div class="question">2. Which TWO of the following are effective strategies for fostering collaboration in a software development team? (Select exactly TWO)</div>
+        <div class="options">
+          <label class="option">
+            <input type="checkbox" name="q2" value="a">
+            <span class="option-label">Using a shared version control system like Git</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="q2" value="b">
+            <span class="option-label">Having team members work in isolation to prevent conflicts</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="q2" value="c">
+            <span class="option-label">Conducting regular code reviews</span>
+          </label>
+          <label class="option">
+            <input type="checkbox" name="q2" value="d">
+            <span class="option-label">Limiting communications to formal documentation</span>
+          </label>
+        </div>
+        <div class="feedback" id="feedback2"></div>
+      </div>
+
+      <!-- Question 3: Topic 1.2 Program Function and Purpose - Single-choice -->
+      <div class="question-container" id="q3" style="display: none;">
+        <div class="question">3. What is the primary purpose of this code segment?</div>
+        <div class="code-example">
+function isPalindrome(str) {
+  // Remove non-alphanumeric characters and convert to lowercase
+  const cleanStr = str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+
+  // Compare with reversed version
+  const reversedStr = cleanStr.split('').reverse().join('');
+  return cleanStr === reversedStr;
+}</div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="q3" value="a">
+            <span class="option-label">To count the number of characters in a string</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q3" value="b">
+            <span class="option-label">To check if a string reads the same forward and backward</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q3" value="c">
+            <span class="option-label">To encrypt a string by reversing its characters</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q3" value="d">
+            <span class="option-label">To remove all non-alphanumeric characters from a string</span>
+          </label>
+        </div>
+        <div class="feedback" id="feedback3"></div>
+      </div>
+
+      <!-- Question 4: Topic 1.2 Program Function and Purpose - Single-choice -->
+      <div class="question-container" id="q4" style="display: none;">
+        <div class="question">4. In the following code, what are the inputs to the function?</div>
+        <div class="code-example">
+function generateUsername(firstName, lastName, birthYear) {
+  const username = lastName.substring(0, 5).toLowerCase() + 
+                  firstName.charAt(0).toLowerCase() + 
+                  birthYear.toString().substring(2);
+  return username;
+}</div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="q4" value="a">
+            <span class="option-label">firstName, lastName, and birthYear parameters</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q4" value="b">
+            <span class="option-label">The username variable</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q4" value="c">
+            <span class="option-label">The return value of the function</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q4" value="d">
+            <span class="option-label">The substring and charAt methods</span>
+          </label>
+        </div>
+        <div class="feedback" id="feedback4"></div>
+      </div>
+
+      <!-- Question 5: Topic 1.3 Program Design and Development - Single-choice -->
+      <div class="question-container" id="q5" style="display: none;">
+        <div class="question">5. Which of the following best describes an iterative program development process?</div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="q5" value="a">
+            <span class="option-label">Completing all planning before starting any coding</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q5" value="b">
+            <span class="option-label">Creating a complete version of a program before testing begins</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q5" value="c">
+            <span class="option-label">Developing a program by building and testing small parts one at a time</span>
+          </label>
+          <label class="option">
+            <input type="radio" name="q5" value="d">
+            <span class="option-label">Writing documentation after the entire program is completed</span>
+          </label>
+        </div>
+        <div class="feedback" id="feedback5"></div>
+      </div>
+
+      <!-- Additional questions would be added here -->
+
+      <!-- Navigation -->
+      <div class="navigation">
+        <button id="prev-btn" class="btn" disabled>Previous</button>
+        <button id="submit-btn" class="btn btn-submit">Submit Answer</button>
+        <button id="next-btn" class="btn" disabled>Next</button>
+      </div>
+    </div>
+
+    <!-- Results Section (Initially Hidden) -->
+    <div class="results" id="results">
+      <div class="results-header">
+        <h2 class="results-title">Big Idea 1 Progress Check Complete!</h2>
+        <p class="results-subtitle">Here's your comprehensive assessment of Creative Development concepts</p>
+      </div>
+
+      <div class="score-container">
+        <div class="score-value" id="score-percentage">85%</div>
+        <div class="score-text">Your Score</div>
+      </div>
+
+      <div class="score-details">
+        <div class="detail-item">
+          <div class="detail-value" id="score-points">17/20</div>
+          <div class="detail-label">Questions Correct</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-value" id="score-time">32:45</div>
+          <div class="detail-label">Time Taken</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-value" id="score-result">PASS</div>
+          <div class="detail-label">Result</div>
+        </div>
+      </div>
+
+      <!-- Topic Breakdown Section -->
+      <div class="topics-breakdown">
+        <h3 class="topics-header">Performance by Topic</h3>
+
+        <div class="topic-performance topic-excellent">
+          <div class="topic-name">
+            <span>Topic 1.1: Collaboration</span>
+            <span class="topic-score">5/5</span>
+          </div>
+          <div class="topic-bar-container">
+            <div class="topic-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <div class="topic-performance topic-good">
+          <div class="topic-name">
+            <span>Topic 1.2: Program Function and Purpose</span>
+            <span class="topic-score">4/5</span>
+          </div>
+          <div class="topic-bar-container">
+            <div class="topic-bar" style="width: 80%;"></div>
+          </div>
+        </div>
+
+        <div class="topic-performance topic-good">
+          <div class="topic-name">
+            <span>Topic 1.3: Program Design and Development</span>
+            <span class="topic-score">4/5</span>
+          </div>
+          <div class="topic-bar-container">
+            <div class="topic-bar" style="width: 80%;"></div>
+          </div>
+        </div>
+
+        <div class="topic-performance topic-needs-work">
+          <div class="topic-name">
+            <span>Topic 1.4: Identifying and Correcting Errors</span>
+            <span class="topic-score">3/5</span>
+          </div>
+          <div class="topic-bar-container">
+            <div class="topic-bar" style="width: 60%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificate Section -->
+      <div class="certificate">
+        <div class="certificate-header">
+          <div class="certificate-title">Certificate of Completion</div>
+          <div class="certificate-subtitle">Big Idea 1: Creative Development</div>
+        </div>
+
+        <div class="certificate-body">
+          <div class="certificate-name" id="certificate-name">Student Name</div>
+          <div class="certificate-date" id="certificate-date">March 16, 2025</div>
+        </div>
+
+        <div class="certificate-footer">
+          <p>AP Computer Science Principles<br>Interactive Quiz Platform</p>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="big-idea-1.html" class="btn">Back to Big Idea 1</a>
+        <button id="review-btn" class="btn">Review Answers</button>
+        <button id="retake-btn" class="btn btn-submit">Retake Progress Check</button>
+      </div>
+
+      <!-- Feedback Section (Initially Hidden) -->
+      <div class="feedback-section" id="feedback-section" style="display: none;">
+        <h3 class="feedback-header">Detailed Question Review</h3>
+
+        <!-- Feedback items will be dynamically generated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Quiz Configuration
+    const quizConfig = {
+      timeLimit: 45 * 60, // 45 minutes in seconds
+      passingScore: 70, // 70% to pass
+      questions: [
+        // Question 1: Single-choice (1.1 Collaboration)
+        {
+          type: 'single',
+          topic: '1.1',
+          correctAnswer: 'c',
+          explanation: 'Collaboration produces computing innovations that reflect the diversity of talents and perspectives of those who designed it, resulting in a more inclusive product. This is a key concept in Topic 1.1: Collaboration (CRD-1.A.3).'
+        },
+        // Question 2: Multiple-choice with 2 correct answers (1.1 Collaboration)
+        {
+          type: 'multiple',
+          topic: '1.1',
+          correctAnswers: ['a', 'c'],
+          explanation: 'Using a shared version control system and conducting regular code reviews are both effective collaboration strategies in software development. Version control enables multiple developers to work on the same codebase, while code reviews facilitate knowledge sharing and quality improvement (CRD-1.C).'
+        },
+        // Question 3: Single-choice (1.2 Program Function and Purpose)
+        {
+          type: 'single',
+          topic: '1.2',
+          correctAnswer: 'b',
+          explanation: 'This function\'s purpose is to check if a string is a palindrome (reads the same forward and backward). It removes non-alphanumeric characters, converts to lowercase, and then compares the string with its reversed version (CRD-2.A).'
+        },
+        // Question 4: Single-choice (1.2 Program Function and Purpose)
+        {
+          type: 'single',
+          topic: '1.2',
+          correctAnswer: 'a',
+          explanation: 'The inputs to this function are the parameters firstName, lastName, and birthYear. These are the data that the function receives and processes to generate a username (CRD-2.B).'
+        },
+        // Question 5: Single-choice (1.3 Program Design and Development)
+        {
+          type: 'single',
+          topic: '1.3',
+          correctAnswer: 'c',
+          explanation: 'An iterative development process involves building and testing small parts of a program one at a time, with regular feedback and refinement. This incremental approach allows for continuous improvement throughout the development cycle (CRD-2.E).'
+        },
+        // Additional questions would be configured here...
+      ],
+      totalQuestions: 20 // Total number of questions
+    };
+
+    // Quiz State
+    let quizState = {
+      currentQuestion: 1,
+      timeRemaining: quizConfig.timeLimit,
+      timer: null,
+      answers: Array(quizConfig.totalQuestions).fill(null),
+      completed: Array(quizConfig.totalQuestions).fill(false),
+      score: 0,
+      topicScores: {
+        '1.1': { correct: 0, total: 0 },
+        '1.2': { correct: 0, total: 0 },
+        '1.3': { correct: 0, total: 0 },
+        '1.4': { correct: 0, total: 0 }
+      }
+    };
+
+    // DOM Elements
+    const currentQuestionEl = document.getElementById('current-question');
+    const totalQuestionsEl = document.getElementById('total-questions');
+    const progressBarEl = document.getElementById('progress-bar');
+    const timerEl = document.getElementById('timer');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const quizContainer = document.getElementById('quiz-container');
+    const resultsContainer = document.getElementById('results');
+    const feedbackSection = document.getElementById('feedback-section');
+    const reviewBtn = document.getElementById('review-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+
+    // For demo purposes, we're showing just the first 5 questions
+    // In a real application, you would have all 20 questions defined
+
+    // Initialize Quiz
+    function initQuiz() {
+      // Set total questions
+      totalQuestionsEl.textContent = quizConfig.totalQuestions;
+
+      // Update progress
+      updateProgress();
+
+      // Start timer
+      startTimer();
+
+      // Add event listeners
+      prevBtn.addEventListener('click', goToPreviousQuestion);
+      nextBtn.addEventListener('click', goToNextQuestion);
+      submitBtn.addEventListener('click', submitAnswer);
+      reviewBtn.addEventListener('click', toggleReview);
+      retakeBtn.addEventListener('click', retakeQuiz);
+      document.getElementById('logout-btn').addEventListener('click', logout);
+
+      // Make each option clickable
+      document.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', function(e) {
+          // If clicked on the label part, but not directly on the input
+          if (e.target.classList.contains('option-label')) {
+            // Find the input within this option and click it
+            const input = this.querySelector('input');
+            input.click();
+          }
+        });
+      });
+
+      // Add input change listeners
+      document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+        input.addEventListener('change', function() {
+          // Handle styling for radio buttons
+          if (this.type === 'radio') {
+            // Remove selected class from all options in this group
+            document.querySelectorAll(`input[name="${this.name}"]`).forEach(radio => {
+              radio.closest('.option').classList.remove('option-selected');
+            });
+
+            // Add selected class to this option
+            this.closest('.option').classList.add('option-selected');
+          }
+          // Handle styling for checkboxes
+          else if (this.type === 'checkbox') {
+            if (this.checked) {
+              this.closest('.option').classList.add('option-selected');
+            } else {
+              this.closest('.option').classList.remove('option-selected');
+            }
+          }
+
+          // Enable submit button when an option is selected
+          submitBtn.disabled = false;
+        });
+      });
+
+      // Set student name in certificate
+      // In a real app, this would come from the user's profile
+      document.getElementById('certificate-name').textContent = "Student Name";
+      document.getElementById('certificate-date').textContent = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+
+    // Timer Functions
+    function startTimer() {
+      updateTimerDisplay();
+      quizState.timer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      quizState.timeRemaining--;
+      updateTimerDisplay();
+
+      if (quizState.timeRemaining <= 0) {
+        clearInterval(quizState.timer);
+        finishQuiz();
+      }
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(quizState.timeRemaining / 60);
+      const seconds = quizState.timeRemaining % 60;
+      timerEl.textContent = `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+      // Add warning colors
+      if (quizState.timeRemaining <= 300) { // 5 minutes or less
+        timerEl.style.backgroundColor = '#dc3545';
+      } else if (quizState.timeRemaining <= 600) { // 10 minutes or less
+        timerEl.style.backgroundColor = '#ffc107';
+        timerEl.style.color = '#333';
+      }
+    }
+
+    // Navigation Functions
+    function goToPreviousQuestion() {
+      if (quizState.currentQuestion > 1) {
+        quizState.currentQuestion--;
+        showQuestion(quizState.currentQuestion);
+        updateProgress();
+      }
+    }
+
+    function goToNextQuestion() {
+      if (quizState.currentQuestion < quizConfig.totalQuestions) {
+        quizState.currentQuestion++;
+        showQuestion(quizState.currentQuestion);
+        updateProgress();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function showQuestion(questionNumber) {
+      // Hide all questions
+      document.querySelectorAll('.question-container').forEach(q => {
+        q.style.display = 'none';
+      });
+
+      // Show current question
+      const questionEl = document.getElementById(`q${questionNumber}`);
+      if (questionEl) {
+        questionEl.style.display = 'block';
+      } else {
+        // In a real app, you would generate the question dynamically here
+        // For this demo, we'll show a placeholder message for questions beyond our examples
+        generatePlaceholderQuestion(questionNumber);
+      }
+
+      // Update current question number
+      currentQuestionEl.textContent = questionNumber;
+
+      // Update navigation buttons
+      prevBtn.disabled = questionNumber === 1;
+      nextBtn.disabled = !quizState.completed[questionNumber - 1];
+
+      // Reset submit button state
+      if (quizState.completed[questionNumber - 1]) {
+        submitBtn.disabled = true;
+      } else {
+        // Check if any option is selected
+        const selectedOption = document.querySelector(`#q${questionNumber} input:checked`);
+        submitBtn.disabled = !selectedOption;
+      }
+    }
+
+    function generatePlaceholderQuestion(questionNumber) {
+      // This is just for the demo - in a real app, you would have all questions defined
+      const isMultipleChoice = (questionNumber === 8 || questionNumber === 13 || questionNumber === 18);
+      const topic = questionNumber <= 5 ? '1.1' : 
+                   questionNumber <= 10 ? '1.2' : 
+                   questionNumber <= 15 ? '1.3' : '1.4';
+
+      const topicNames = {
+        '1.1': 'Collaboration',
+        '1.2': 'Program Function and Purpose',
+        '1.3': 'Program Design and Development',
+        '1.4': 'Identifying and Correcting Errors'
+      };
+
+      const questionHTML = `
+        <div class="question-container" id="q${questionNumber}">
+          <div class="question">${questionNumber}. [Topic ${topic}: ${topicNames[topic]}] ${isMultipleChoice ? 'Select TWO options that' : 'Which of the following'} best describe${isMultipleChoice ? '' : 's'} ${topic === '1.1' ? 'effective collaboration practices' : 
+          topic === '1.2' ? 'program functionality' : 
+          topic === '1.3' ? 'program development processes' : 
+          'debugging techniques'}? ${isMultipleChoice ? '(Select exactly TWO)' : ''}</div>
+
+          ${topic === '1.2' || topic === '1.4' ? `
+          <div class="code-example">
+// Sample code for illustration
+function example${questionNumber}(data) {
+  // Processing logic
+  return result;
+}
+          </div>` : ''}
+
+          <div class="options">
+            ${isMultipleChoice ? `
+              <label class="option">
+                <input type="checkbox" name="q${questionNumber}" value="a">
+                <span class="option-label">Option A for question ${questionNumber}</span>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="q${questionNumber}" value="b">
+                <span class="option-label">Option B for question ${questionNumber}</span>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="q${questionNumber}" value="c">
+                <span class="option-label">Option C for question ${questionNumber}</span>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="q${questionNumber}" value="d">
+                <span class="option-label">Option D for question ${questionNumber}</span>
+              </label>
+            ` : `
+              <label class="option">
+                <input type="radio" name="q${questionNumber}" value="a">
+                <span class="option-label">Option A for question ${questionNumber}</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q${questionNumber}" value="b">
+                <span class="option-label">Option B for question ${questionNumber}</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q${questionNumber}" value="c">
+                <span class="option-label">Option C for question ${questionNumber}</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="q${questionNumber}" value="d">
+                <span class="option-label">Option D for question ${questionNumber}</span>
+              </label>
+            `}
+          </div>
+          <div class="feedback" id="feedback${questionNumber}"></div>
+        </div>
+      `;
+
+      quizContainer.insertAdjacentHTML('beforeend', questionHTML);
+
+      // Add event listeners for radio/checkbox inputs
+      document.querySelectorAll(`#q${questionNumber} input`).forEach(input => {
+        input.addEventListener('change', function() {
+          // Handle styling
+          if (this.type === 'radio') {
+            document.querySelectorAll(`input[name="${this.name}"]`).forEach(radio => {
+              radio.closest('.option').classList.remove('option-selected');
+            });
+            this.closest('.option').classList.add('option-selected');
+          } else if (this.type === 'checkbox') {
+            if (this.checked) {
+              this.closest('.option').classList.add('option-selected');
+            } else {
+              this.closest('.option').classList.remove('option-selected');
+            }
+          }
+
+          // Enable submit button
+          submitBtn.disabled = false;
+        });
+      });
+    }
+
+    function updateProgress() {
+      // Update progress bar
+      const progress = (quizState.currentQuestion / quizConfig.totalQuestions) * 100;
+      progressBarEl.style.width = `${progress}%`;
+    }
+
+    // Answer Submission
+    function submitAnswer() {
+      const questionNumber = quizState.currentQuestion;
+      const questionData = quizConfig.questions[questionNumber - 1];
+      const questionEl = document.getElementById(`q${questionNumber}`);
+      const feedbackEl = document.getElementById(`feedback${questionNumber}`);
+
+      // Determine topic for tracking scores
+      const topic = questionData ? questionData.topic : 
+                   (questionNumber <= 5 ? '1.1' : 
+                   questionNumber <= 10 ? '1.2' : 
+                   questionNumber <= 15 ? '1.3' : '1.4');
+
+      // Increment total for this topic
+      quizState.topicScores[topic].total++;
+
+      // Skip if no question data (for placeholder questions)
+      if (!questionData && questionNumber > 5) {
+        // Mock feedback for placeholder questions
+        feedbackEl.textContent = "Your answer has been recorded.";
+        feedbackEl.className = "feedback correct";
+        feedbackEl.style.display = "block";
+
+        // Mark as completed and enable next
+        quizState.completed[questionNumber - 1] = true;
+        nextBtn.disabled = false;
+        submitBtn.disabled = true;
+
+        // Record a correct answer for demo purposes
+        quizState.score++;
+        quizState.topicScores[topic].correct++;
+        return;
+      }
+
+      let isCorrect = false;
+      let userAnswer;
+
+      // Process answer based on question type
+      if (questionData && questionData.type === 'single') {
+        // Get selected option for single-choice question
+        const selectedOption = questionEl.querySelector('input[type="radio"]:checked');
+        if (selectedOption) {
+          userAnswer = selectedOption.value;
+          isCorrect = userAnswer === questionData.correctAnswer;
+        } else {
+          // No answer selected
+          alert("Please select an answer before submitting.");
+          return;
+        }
+      } 
+      else if (questionData && questionData.type === 'multiple') {
+        // Get selected options for multiple-choice question
+        const selectedOptions = Array.from(questionEl.querySelectorAll('input[type="checkbox"]:checked'))
+          .map(input => input.value);
+
+        userAnswer = selectedOptions;
+
+        // Check if answers match exactly
+        const correctAnswers = questionData.correctAnswers;
+        isCorrect = selectedOptions.length === correctAnswers.length && 
+                   selectedOptions.every(option => correctAnswers.includes(option));
+      }
+      else {
+        // For placeholder questions without questionData
+        const inputs = questionEl.querySelectorAll('input:checked');
+        if (inputs.length === 0) {
+          alert("Please select an answer before submitting.");
+          return;
+        }
+
+        if (inputs[0].type === 'radio') {
+          userAnswer = inputs[0].value;
+          isCorrect = userAnswer === 'c'; // Default correct answer for demo
+        } else {
+          userAnswer = Array.from(inputs).map(input => input.value);
+          isCorrect = userAnswer.length === 2 && userAnswer.includes('a') && userAnswer.includes('c'); // Default correct answers for demo
+        }
+      }
+
+      // Store answer
+      quizState.answers[questionNumber - 1] = userAnswer;
+      quizState.completed[questionNumber - 1] = true;
+
+      // If the answer is correct, increment score
+      if (isCorrect) {
+        quizState.score++;
+        quizState.topicScores[topic].correct++;
+      }
+
+      // Show feedback
+      if (questionData) {
+        feedbackEl.innerHTML = `
+          <strong>${isCorrect ? 'Correct!' : 'Incorrect.'}</strong> 
+          <div class="explanation">${questionData.explanation}</div>
+        `;
+      } else {
+        feedbackEl.innerHTML = `
+          <strong>${isCorrect ? 'Correct!' : 'Incorrect.'}</strong> 
+          <div class="explanation">This question tests your understanding of ${
+            topic === '1.1' ? 'collaboration principles and strategies' : 
+            topic === '1.2' ? 'program functionality and purpose' : 
+            topic === '1.3' ? 'program design and development processes' : 
+            'error identification and debugging techniques'
+          }.</div>
+        `;
+      }
+
+      feedbackEl.className = isCorrect ? "feedback correct" : "feedback incorrect";
+      feedbackEl.style.display = "block";
+
+      // Disable inputs
+      questionEl.querySelectorAll('input').forEach(input => {
+        input.disabled = true;
+      });
+
+      // Enable next button, disable submit button
+      nextBtn.disabled = false;
+      submitBtn.disabled = true;
+    }
+
+    // Quiz Completion
+    function finishQuiz() {
+      // Clear timer
+      clearInterval(quizState.timer);
+
+      // Calculate score
+      const scorePercentage = Math.round((quizState.score / quizConfig.totalQuestions) * 100);
+      const isPassing = scorePercentage >= quizConfig.passingScore;
+
+      // Calculate time taken
+      const timeTaken = quizConfig.timeLimit - quizState.timeRemaining;
+      const minutes = Math.floor(timeTaken / 60);
+      const seconds = timeTaken % 60;
+      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+      // Update results display
+      document.getElementById('score-percentage').textContent = `${scorePercentage}%`;
+      document.getElementById('score-points').textContent = `${quizState.score}/${quizConfig.totalQuestions}`;
+      document.getElementById('score-time').textContent = timeString;
+      document.getElementById('score-result').textContent = isPassing ? 'PASS' : 'FAIL';
+      document.getElementById('score-result').style.color = isPassing ? 'var(--success)' : 'var(--danger)';
+
+      // Update topic scores
+      updateTopicScores();
+
+      // Hide quiz, show results
+      quizContainer.style.display = 'none';
+      resultsContainer.style.display = 'block';
+
+      // Generate feedback content
+      generateFeedbackContent();
+    }
+
+    function updateTopicScores() {
+      const topicElements = document.querySelectorAll('.topic-performance');
+
+      let index = 0;
+      for (const topic in quizState.topicScores) {
+        if (quizState.topicScores.hasOwnProperty(topic) && index < topicElements.length) {
+          const { correct, total } = quizState.topicScores[topic];
+          const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+          // Update score text
+          topicElements[index].querySelector('.topic-score').textContent = `${correct}/${total}`;
+
+          // Update progress bar width
+          topicElements[index].querySelector('.topic-bar').style.width = `${percentage}%`;
+
+          // Update class based on score
+          topicElements[index].className = 'topic-performance';
+          if (percentage >= 80) {
+            topicElements[index].classList.add('topic-excellent');
+          } else if (percentage >= 70) {
+            topicElements[index].classList.add('topic-good');
+          } else {
+            topicElements[index].classList.add('topic-needs-work');
+          }
+
+          index++;
+        }
+      }
+    }
+
+    function generateFeedbackContent() {
+      // In a real application, you would generate detailed feedback for each question
+      let feedbackHTML = '';
+
+      // For demo purposes, we'll just create feedback for the first 5 questions
+      for (let i = 0; i < Math.min(5, quizConfig.questions.length); i++) {
+        const questionNumber = i + 1;
+        const questionData = quizConfig.questions[i];
+
+        let feedbackContent = '';
+
+        if (questionData.type === 'single') {
+          const userAnswer = quizState.answers[i];
+          const isCorrect = userAnswer === questionData.correctAnswer;
+
+          feedbackContent = `
+            <div class="feedback-answer">
+              Your answer: ${getOptionLabel(questionNumber, userAnswer) || 'Not answered'}
+              <br>
+              Correct answer: ${getOptionLabel(questionNumber, questionData.correctAnswer)}
+            </div>
+          `;
+
+          feedbackHTML += `
+            <div class="feedback-item">
+              <div class="feedback-question">${questionNumber}. ${document.querySelector(`#q${questionNumber} .question`).textContent.substring(questionNumber.toString().length + 2)}</div>
+              ${feedbackContent}
+              <div class="feedback-explanation ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
+                ${questionData.explanation}
+              </div>
+            </div>
+          `;
+        } else if (questionData.type === 'multiple') {
+          const userAnswers = quizState.answers[i] || [];
+          const correctAnswers = questionData.correctAnswers;
+          const isCorrect = userAnswers.length === correctAnswers.length && 
+                            userAnswers.every(a => correctAnswers.includes(a));
+
+          feedbackContent = `
+            <div class="feedback-answer">
+              Your answers: ${Array.isArray(userAnswers) ? userAnswers.map(a => getOptionLabel(questionNumber, a)).join(', ') : 'Not answered'}
+              <br>
+              Correct answers: ${correctAnswers.map(a => getOptionLabel(questionNumber, a)).join(', ')}
+            </div>
+          `;
+
+          feedbackHTML += `
+            <div class="feedback-item">
+              <div class="feedback-question">${questionNumber}. ${document.querySelector(`#q${questionNumber} .question`).textContent.substring(questionNumber.toString().length + 2)}</div>
+              ${feedbackContent}
+              <div class="feedback-explanation ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
+                ${questionData.explanation}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Add placeholder for the rest of the questions
+      feedbackHTML += `
+        <div class="feedback-item">
+          <div class="feedback-question">Additional question feedback would appear here...</div>
+        </div>
+      `;
+
+      feedbackSection.innerHTML = `
+        <h3 class="feedback-header">Detailed Question Review</h3>
+        ${feedbackHTML}
+      `;
+    }
+
+    function getOptionLabel(questionNumber, optionValue) {
+      const option = document.querySelector(`#q${questionNumber} input[value="${optionValue}"]`);
+      return option ? option.nextElementSibling.textContent.trim() : optionValue;
+    }
+
+    function toggleReview() {
+      const isVisible = feedbackSection.style.display === 'block';
+      feedbackSection.style.display = isVisible ? 'none' : 'block';
+      reviewBtn.textContent = isVisible ? 'Review Answers' : 'Hide Review';
+    }
+
+    function retakeQuiz() {
+      // Reset quiz state
+      quizState = {
+        currentQuestion: 1,
+        timeRemaining: quizConfig.timeLimit,
+        timer: null,
+        answers: Array(quizConfig.totalQuestions).fill(null),
+        completed: Array(quizConfig.totalQuestions).fill(false),
+        score: 0,
+        topicScores: {
+          '1.1': { correct: 0, total: 0 },
+          '1.2': { correct: 0, total: 0 },
+          '1.3': { correct: 0, total: 0 },
+          '1.4': { correct: 0, total: 0 }
+        }
+      };
+
+      // Reset UI
+      document.querySelectorAll('.feedback').forEach(el => {
+        el.style.display = 'none';
+        el.className = 'feedback';
+      });
+
+      document.querySelectorAll('input').forEach(input => {
+        input.disabled = false;
+        input.checked = false;
+      });
+
+      document.querySelectorAll('.option').forEach(option => {
+        option.classList.remove('option-selected');
+      });
+
+      // Show quiz, hide results
+      quizContainer.style.display = 'block';
+      resultsContainer.style.display = 'none';
+
+      // Show first question
+      showQuestion(1);
+
+      // Reset progress
+      updateProgress();
+
+      // Start timer
+      startTimer();
+
+      // Reset button states
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      submitBtn.disabled = true;
+    }
+
+    function logout() {
+      // Clear any session data
+      sessionStorage.removeItem('loggedIn');
+      // Redirect to login page
+      window.location.href = 'index.html';
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check login status
+      if (!sessionStorage.getItem('loggedIn')) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      initQuiz();
+    });
+  </script>
+</body>
+</html>

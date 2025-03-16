@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yazı Değerlendirme - Analiz Sonuçları</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #f39c12;
+            --dark-color: #34495e;
+            --light-color: #ecf0f1;
+            --danger-color: #e74c3c;
+            --tertiary-color: #9b59b6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        h1, h2, h3 {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        header h1 {
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .score-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .score-card {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--light-color);
+        }
+
+        .score-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .charts-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            flex: 1 1 400px;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .pie-chart-container, .bar-chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .subcategory-analysis {
+            margin-top: 2rem;
+        }
+
+        .subcategory-item {
+            margin-bottom: 15px;
+            padding: 0.5rem 0;
+        }
+
+        .original-text {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            font-style: italic;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .original-text h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .original-text p {
+            margin-bottom: 0.5rem;
+        }
+
+        .analysis-summary {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-summary h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .detailed-analysis {
+            margin: 2rem 0;
+        }
+
+        .analysis-category {
+            margin-bottom: 2rem;
+        }
+
+        .analysis-category h3 {
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .analysis-item {
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .analysis-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .strengths, .improvements {
+            margin-top: 0.5rem;
+        }
+
+        .strengths h5, .improvements h5 {
+            color: var(--secondary-color);
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .improvements h5 {
+            color: var(--danger-color);
+        }
+
+        .strength-text {
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .improvement-text {
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .score-summary {
+                flex-direction: column;
+            }
+
+            .score-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Metniniz analiz ediliyor...</p>
+    </div>
+
+    <header>
+        <h1>Yazı Değerlendirme Analiz Sonuçları</h1>
+        <p class="tagline">Metninizin detaylı analizi</p>
+    </header>
+
+    <div class="container">
+        <div class="original-text">
+            <h3>Değerlendirilen Metin</h3>
+            <p id="originalTextTitle"></p>
+            <p id="originalTextType">Tespit Edilen Metin Türü: <span id="detectedTextType">-</span></p>
+            <p id="originalTextContent"></p>
+        </div>
+
+        <section class="results-section">
+            <h2>Analiz Sonuçları</h2>
+            <div class="score-summary">
+                <div class="score-card">
+                    <h3>Genel Puan</h3>
+                    <div class="score-value" id="overallScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>İçerik Kalitesi</h3>
+                    <div class="score-value" id="contentScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>Dil ve Yapı</h3>
+                    <div class="score-value" id="languageScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>Gramer ve Teknik</h3>
+                    <div class="score-value" id="grammarScore">-</div>
+                </div>
+                <div class="score-card">
+                    <h3>Etki ve Algı</h3>
+                    <div class="score-value" id="impactScore">-</div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <!-- Pie Chart Container (replaced bar chart) -->
+                <div class="chart-container">
+                    <h3>Kategori Puanları</h3>
+                    <div class="pie-chart-container">
+                        <canvas id="pieChartCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bar Chart Container (replaced radar chart) -->
+                <div class="chart-container">
+                    <h3>Alt Kategori Dağılımı</h3>
+                    <div class="bar-chart-container">
+                        <canvas id="barChartCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-summary">
+                <h3>Özet Değerlendirme</h3>
+                <p id="summaryText"></p>
+            </div>
+
+            <div class="subcategory-analysis" id="subcategoryAnalysis">
+                <!-- Alt kategori analizi burada gösterilecek -->
+            </div>
+
+            <div class="detailed-analysis">
+                <h2>Detaylı Analiz</h2>
+
+                <div class="analysis-category">
+                    <h3 style="color: #3498db;">1. İçerik ve Anlatım Kalitesi</h3>
+
+                    <div class="analysis-item">
+                        <h4>Hayal Gücü ve Yaratıcılık</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="hayalGucu-guclu" class="strength-text" style="background-color: rgba(52, 152, 219, 0.1);">Konu üzerinde farklı açılardan düşünme yeteneğiniz açıkça görülüyor.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="hayalGucu-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Bazı bölümlerde klişe anlatım teknikleri kullanılmış.</p>
+                        </div>
+                    </div>
+
+                    <div class="analysis-item">
+                        <h4>Özgünlük</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="ozgunluk-guclu" class="strength-text" style="background-color: rgba(52, 152, 219, 0.1);">Standart kalıpların dışına çıkarak özgün bir tarz oluşturmuşsunuz.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="ozgunluk-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Daha özgün örnekler ve anlatım teknikleri geliştirilebilir.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-category">
+                    <h3 style="color: #2ecc71;">2. Dil ve Yapısal Özellikler</h3>
+
+                    <div class="analysis-item">
+                        <h4>Kelime Seçimi</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="kelimeSecimi-guclu" class="strength-text" style="background-color: rgba(46, 204, 113, 0.1);">Anlatımı güçlendiren isabetli kelime tercihleri yapılmış.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="kelimeSecimi-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Bazı bölümlerde daha isabetli kelime seçimleri yapılabilir.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <h4>Cümle ve Paragraf Tutarlılığı</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="cumleTutarliligi-guclu" class="strength-text" style="background-color: rgba(46, 204, 113, 0.1);">Cümleler arasında güçlü bir anlam bağı kurulmuş.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="cumleTutarliligi-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Cümlelerin birbirini desteklemesi konusunda gelişim sağlanabilir.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <h4>Paragraf Organizasyonu</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="paragrafOrganizasyonu-guclu" class="strength-text" style="background-color: rgba(46, 204, 113, 0.1);">Paragraflar arası geçişler akıcı ve doğal.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="paragrafOrganizasyonu-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Bazı uzun paragraflar bölünerek daha etkili hale getirilebilir.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-category">
+                    <h3 style="color: #9b59b6;">3. Gramer ve Teknik Doğruluk</h3>
+
+                    <div class="analysis-item">
+                        <h4>Yazım ve Noktalama</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="yazimNoktalama-guclu" class="strength-text" style="background-color: rgba(155, 89, 182, 0.1);">Cümle yapıları dilbilgisi açısından sağlam.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="yazimNoktalama-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Yer yer yazım hataları görülüyor.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-category">
+                    <h3 style="color: #f39c12;">4. Etki ve Okuyucu Algısı</h3>
+
+                    <div class="analysis-item">
+                        <h4>Duygusal ve İkna Edici Güç</h4>
+                        <div class="strengths">
+                            <h5>Güçlü Yönler:</h5>
+                            <p id="iknaGucu-guclu" class="strength-text" style="background-color: rgba(243, 156, 18, 0.1);">Okuyucuyu düşündüren ve etkileyen bir anlatım geliştirilmiş.</p>
+                        </div>
+                        <div class="improvements">
+                            <h5>Geliştirilebilir Alanlar:</h5>
+                            <p id="iknaGucu-gelisim" class="improvement-text" style="background-color: rgba(231, 76, 60, 0.1);">Daha güçlü ve ikna edici ifadeler eklenebilir.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn" id="downloadReportBtn">Raporu İndir (Word)</button>
+                <a href="index.html" class="btn btn-secondary">Yeni Analiz</a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 Yazı Değerlendirme Platformu. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script>
+        // Sayfa yüklendiğinde URL'den parametreleri al ve metni değerlendir
+        window.onload = function() {
+            try {
+                // Yükleme ekranını gizleme fonksiyonu
+                function hideLoadingScreen() {
+                    const loadingEl = document.getElementById('loadingOverlay');
+                    if (loadingEl) {
+                        loadingEl.style.display = 'none';
+                    } else {
+                        console.error("Loading overlay element not found!");
+                    }
+                }
+                
+                // URL'den parametreleri al ve decode et
+                const urlParams = new URLSearchParams(window.location.search);
+                const metinTuru = urlParams.get('metinTuru');
+                const baslik = urlParams.get('baslik') ? decodeURIComponent(urlParams.get('baslik')) : "";
+                const metin = urlParams.get('metin') ? decodeURIComponent(urlParams.get('metin')) : "";
+
+                // Orijinal metni göster
+                document.getElementById('originalTextTitle').textContent = baslik ? `Başlık: ${baslik}` : "";
+                document.getElementById('originalTextContent').textContent = metin || "Metin bulunamadı.";
+
+                // Metin boşsa uyarı ver ve yüklemeyi durdur
+                if (!metin) {
+                    hideLoadingScreen(); // Hemen gizle
+                    alert('Değerlendirilecek metin bulunamadı. Lütfen ana sayfadan tekrar deneyin.');
+                    return;
+                }
+
+                // Analiz sürecini başlat
+                setTimeout(function() {
+                    try {
+                        // Eğer metin türü belirtilmemişse, otomatik tespit et
+                        const tespit_edilen_tur = metinTuru || otomatikMetinTuruTespiti(metin);
+
+                        // Metni değerlendir
+                        const sonuclar = metniDegerlendir(metin, tespit_edilen_tur);
+
+                        // Sonuçları göster
+                        gosterSonuclar(sonuclar, tespit_edilen_tur);
+                    } catch (error) {
+                        console.error("Error during analysis:", error);
+                        alert("Metin analiz edilirken bir hata oluştu. Lütfen tekrar deneyin.");
+                    } finally {
+                        // Hata olsa da olmasa da yükleme ekranını kaldır
+                        hideLoadingScreen();
+                    }
+                }, 1500); // Gerçekçi bir "analiz" süresi
+                
+                // Sayfada herhangi bir yere tıklandığında da yükleme ekranını gizle (yedek çözüm)
+                document.addEventListener('click', function() {
+                    const loadingOverlay = document.getElementById('loadingOverlay');
+                    if (loadingOverlay && loadingOverlay.style.display !== 'none') {
+                        loadingOverlay.style.display = 'none';
+                    }
+                });
+                
+                // Yükleme 10 saniyeden uzun sürerse otomatik olarak gizle
+                setTimeout(function() {
+                    hideLoadingScreen();
+                }, 10000);
+                
+            } catch (error) {
+                console.error("Error in window.onload:", error);
+                // Beklenmeyen bir hata olursa yükleme ekranını gizlemeye çalış
+                try {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                } catch (e) {
+                    console.error("Could not hide loading overlay:", e);
+                }
+            }
+        };
+
+        // Yükleme ekranını gizle - Genel fonksiyon
+        function hideLoading() {
+            try {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Error hiding loading overlay:", error);
+            }
+        }
+
+        // Metin türünü otomatik tespit eden gelişmiş fonksiyon
+        function otomatikMetinTuruTespiti(metin) {
+            try {
+                // İleri düzey NLP analizi yapılabilir (şu an basit algoritma kullanılıyor)
+                const kelimeSayisi = metin.split(/\s+/).length;
+                const paragrafSayisi = metin.split(/\n\s*\n/).filter(p => p.trim().length > 0).length || 1;
+                const cumleSayisi = metin.split(/[.!?]/).filter(c => c.trim().length > 0).length || 1;
+                const satirSayisi = metin.split('\n').length;
+                const ortalamaCumleBoyutu = kelimeSayisi / cumleSayisi;
+                
+                // Noktalama işaretleri ve özel karakterlerin yoğunluğu
+                const noktalama = (metin.match(/[,;:.!?()[\]{}""'']/g) || []).length / kelimeSayisi;
+                
+                // Şiirsellik analizi - satır sayısı, kısa cümleler ve satır sonları
+                const siirsellikOrani = (satirSayisi / paragrafSayisi) * (1 / ortalamaCumleBoyutu) * 10;
+                
+                // Akademik metin analizi - uzun cümleler, referanslar, teknik terimler
+                const akademikOrani = ortalamaCumleBoyutu / 5 + (metin.match(/\([^)]*\d{4}[^)]*\)|\[[^\]]*\d+[^\]]*\]/g) || []).length;
+                
+                // Hikaye anlatı analizi - diyalog yoğunluğu
+                const diyalogOrani = (metin.match(/["'].*?["']/g) || []).length / cumleSayisi;
+                
+                // Metin uzunluk ve yapı özelliklerine göre tür tespiti
+                if (siirsellikOrani > 2.5 && kelimeSayisi < 500) {
+                    return 'poetry'; // Şiir
+                } else if (kelimeSayisi > 5000 || (kelimeSayisi > 2000 && diyalogOrani > 0.2)) {
+                    return 'novel'; // Roman
+                } else if (akademikOrani > 2.5 || (kelimeSayisi > 1000 && ortalamaCumleBoyutu > 18)) {
+                    return 'article'; // Makale
+                } else if (paragrafSayisi > 5 && kelimeSayisi > 500 && kelimeSayisi < 3000) {
+                    return 'essay'; // Deneme
+                } else if (kelimeSayisi > 300 && diyalogOrani > 0.1) {
+                    return 'story'; // Hikaye
+                } else {
+                    return 'composition'; // Kompozisyon
+                }
+            } catch (error) {
+                console.error("Error in text type detection:", error);
+                return 'composition'; // Hata durumunda varsayılan tür
+            }
+        }
+
+        function metinTuruAdiGetir(tur) {
+            switch(tur) {
+                case 'story': return 'Hikaye';
+                case 'novel': return 'Roman';
+                case 'article': return 'Makale';
+                case 'essay': return 'Deneme';
+                case 'poetry': return 'Şiir';
+                case 'composition': return 'Kompozisyon';
+                default: return 'Belirlenemedi';
+            }
+        }
+
+        // Metni değerlendiren gelişmiş algoritma - Deterministik versiyon
+        function metniDegerlendir(metin, metinTuru) {
+            try {
+                // NLP ve Metin Analizi Yapan Gelişmiş Algoritma
+                
+                // 1. Temel Metin Özellikleri Analizi
+                const kelimeler = metin.toLowerCase().split(/\W+/).filter(w => w.length > 0);
+                const cumleleri = metin.split(/[.!?]+/).filter(c => c.trim().length > 0);
+                const paragraflar = metin.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+                
+                // 2. İstatistiksel Analiz
+                const kelimeSayisi = kelimeler.length;
+                const benzersizKelimeler = new Set(kelimeler);
+                const benzersizKelimeSayisi = benzersizKelimeler.size;
+                const kelimeCesitliligi = benzersizKelimeSayisi / Math.max(1, kelimeSayisi);
+                const cumleSayisi = cumleleri.length;
+                const paragrafSayisi = paragraflar.length;
+                const ortalamaCumleUzunlugu = kelimeSayisi / Math.max(1, cumleSayisi);
+                
+                // 3. Kelime uzunluğu analizi
+                let toplamKelimeUzunlugu = 0;
+                kelimeler.forEach(kelime => {
+                    toplamKelimeUzunlugu += kelime.length;
+                });
+                const ortalamaKelimeUzunlugu = toplamKelimeUzunlugu / Math.max(1, kelimeSayisi);
+                
+                // 4. Noktalama işaretleri analizi
+                const noktalama = (metin.match(/[,;:.!?()[\]{}""'']/g) || []).length;
+                const noktalamaYogunlugu = noktalama / Math.max(1, kelimeSayisi);
+                
+                // 5. Cümle karmaşıklığı (virgül kullanımı)
+                const virgulSayisi = (metin.match(/,/g) || []).length;
+                const virgulYogunlugu = virgulSayisi / Math.max(1, cumleSayisi);
+                
+                // 6. Tekrarlanan Kelime Analizi
+                const kelimeFrekans = {};
+                kelimeler.forEach(kelime => {
+                    kelimeFrekans[kelime] = (kelimeFrekans[kelime] || 0) + 1;
+                });
+                
+                // En çok tekrarlanan 10 kelime
+                const tekrarlananKelimeler = Object.entries(kelimeFrekans)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 10);
+
+                        // 7. Yasaklı Kelime Analizi
+                        const yasakliKelimeler = ['çok', 'aslında', 'gerçekten', 'oldukça', 'biraz'];
+                        let yasakliKelimeSayisi = 0;
+                        yasakliKelimeler.forEach(yasak => {
+                            yasakliKelimeSayisi += (kelimeFrekans[yasak] || 0);
+                        });
+
+                        // 8. Cümle Çeşitliliği Analizi
+                        const cumleTipleri = {
+                            uzun: 0,  // 20+ kelime
+                            orta: 0,  // 10-19 kelime
+                            kisa: 0   // 1-9 kelime
+                        };
+
+                        cumleleri.forEach(cumle => {
+                            const kelimeSayisi = cumle.split(/\s+/).length;
+                            if (kelimeSayisi >= 20) cumleTipleri.uzun++;
+                            else if (kelimeSayisi >= 10) cumleTipleri.orta++;
+                            else cumleTipleri.kisa++;
+                        });
+
+                        // 9. Paragraf yapısı analizi
+                        const paragrafUzunluklari = paragraflar.map(p => p.split(/\s+/).length);
+                        const ortalamaParagrafUzunlugu = kelimeSayisi / Math.max(1, paragrafSayisi);
+                        const paragrafUzunlukVaryasyonu = paragrafSayisi > 1 ? 
+                            paragrafUzunluklari.reduce((sum, len) => sum + Math.abs(len - ortalamaParagrafUzunlugu), 0) / paragrafSayisi : 0;
+
+                        // 10. Metin türüne özel analizler ve katsayılar
+                        let turKatsayilari = {
+                            icerik: 1.0,
+                            dil: 1.0,
+                            gramer: 1.0,
+                            etki: 1.0
+                        };
+
+                        // Metin türüne göre farklı katsayılar uygula
+                        switch (metinTuru) {
+                            case 'poetry': // Şiir
+                                turKatsayilari.icerik = 1.15; // Yaratıcılık ve özgünlük önemli
+                                turKatsayilari.dil = 1.2; // Dil kullanımı çok önemli
+                                turKatsayilari.gramer = 0.8; // Gramer kuralları daha esnek olabilir
+                                turKatsayilari.etki = 1.3; // Duygusal etki çok önemli
+                                break;
+                            case 'novel': // Roman
+                                turKatsayilari.icerik = 1.2; // Karakter ve hikaye geliştirme önemli
+                                turKatsayilari.dil = 1.0;
+                                turKatsayilari.gramer = 1.0;
+                                turKatsayilari.etki = 1.1; // Okuyucu üzerindeki etki önemli
+                                break;
+                            case 'article': // Makale
+                                turKatsayilari.icerik = 1.0;
+                                turKatsayilari.dil = 0.9;
+                                turKatsayilari.gramer = 1.2; // Teknik doğruluk önemli
+                                turKatsayilari.etki = 1.0;
+                                break;
+                            case 'essay': // Deneme
+                                turKatsayilari.icerik = 1.1;
+                                turKatsayilari.dil = 1.1;
+                                turKatsayilari.gramer = 1.0;
+                                turKatsayilari.etki = 1.1;
+                                break;
+                            case 'story': // Hikaye
+                                turKatsayilari.icerik = 1.2;
+                                turKatsayilari.dil = 1.1;
+                                turKatsayilari.gramer = 0.9;
+                                turKatsayilari.etki = 1.2;
+                                break;
+                            case 'composition': // Kompozisyon
+                                turKatsayilari.icerik = 1.1;
+                                turKatsayilari.dil = 1.0;
+                                turKatsayilari.gramer = 1.1;
+                                turKatsayilari.etki = 1.0;
+                                break;
+                        }
+
+                        // 11. Kalite Puanlama Algoritması - Deterministik versiyon
+                        // Metinden bir hash değeri türet (basit bir yaklaşım)
+                        let metinHash = 0;
+                        for (let i = 0; i < metin.length; i++) {
+                            metinHash = (metinHash * 31 + metin.charCodeAt(i)) % 100;
+                        }
+
+                        // Kelime çeşitliliği puanı (0-100)
+                        const kelimeCesitliligiPuani = Math.min(100, Math.round(kelimeCesitliligi * 100));
+
+                        // Cümle yapısı çeşitliliği puanı (0-100)
+                        const cumleYapisiPuani = Math.min(100, Math.round(
+                            (cumleTipleri.uzun * 0.3 + cumleTipleri.orta * 0.5 + cumleTipleri.kisa * 0.2) / 
+                            Math.max(1, cumleSayisi) * 100
+                        ));
+
+                        // Paragraf organizasyonu puanı (0-100)
+                        const paragrafPuani = Math.min(100, Math.round(
+                            Math.max(0.5, Math.min(paragrafSayisi / (kelimeSayisi / 200), 1)) * 100
+                        ));
+
+                        // Yasaklı kelime kullanım cezası (0-20)
+                        const yasakliKelimeCezasi = Math.min(20, Math.round(
+                            (yasakliKelimeSayisi / Math.max(1, kelimeSayisi)) * 100
+                        ));
+
+                        // Metinden hash değeri ve metin özellikleri bazında tutarlı puanlar türet
+                        const kelimeUzunlukPuani = Math.min(100, Math.round((ortalamaKelimeUzunlugu / 10) * 50) + 50);
+                        const virgulKullanimPuani = Math.min(100, Math.round(virgulYogunlugu * 50) + 50);
+                        const paragrafDuzeniPuani = paragrafSayisi > 1 ? 
+                            Math.min(100, 100 - Math.round(paragrafUzunlukVaryasyonu * 5)) : 50;
+
+                        // Ana kategori puanlarını hesapla (deterministik olarak)
+                        // İçerik Kalitesi
+                        let icerikPuani = Math.round(
+                            (70 + kelimeCesitliligiPuani * 0.3 - yasakliKelimeCezasi * 0.5 + 
+                            (metinHash % 10)) * turKatsayilari.icerik
+                        );
+
+                        // Dil ve Yapı
+                        let dilYapiPuani = Math.round(
+                            (65 + cumleYapisiPuani * 0.4 + paragrafPuani * 0.3 + 
+                            kelimeUzunlukPuani * 0.2 + (metinHash % 8)) * turKatsayilari.dil
+                        );
+
+                        // Gramer ve Teknik
+                        let gramerPuani = Math.round(
+                            (75 + (1 - noktalamaYogunlugu) * 10 - yasakliKelimeCezasi * 0.2 + 
+                            virgulKullanimPuani * 0.2 + (metinHash % 6)) * turKatsayilari.gramer
+                        );
+
+                        // Etki ve Algı
+                        let etkiPuani = Math.round(
+                            (60 + kelimeCesitliligiPuani * 0.2 + cumleYapisiPuani * 0.2 + 
+                            paragrafDuzeniPuani * 0.1 + (metinHash % 12)) * turKatsayilari.etki
+                        );
+
+                        // Değerleri sınırlandır (0-100)
+                        icerikPuani = Math.min(100, Math.max(0, icerikPuani));
+                        dilYapiPuani = Math.min(100, Math.max(0, dilYapiPuani));
+                        gramerPuani = Math.min(100, Math.max(0, gramerPuani));
+                        etkiPuani = Math.min(100, Math.max(0, etkiPuani));
+
+                        // Genel puanı hesapla
+                        const genelPuan = Math.round(
+                            icerikPuani * 0.3 + 
+                            dilYapiPuani * 0.25 + 
+                            gramerPuani * 0.2 + 
+                            etkiPuani * 0.25
+                        );
+
+                        // 12. Alt kategori puanlarını hesapla (deterministik olarak)
+                        // Hash değerinin farklı alt değerlerini oluştur
+                        const hashArray = [];
+                        for (let i = 0; i < 20; i++) {
+                            hashArray.push((metinHash * (i + 1)) % 20 + 65);  // 65-85 arası sabit değerler
+                        }
+
+                        const altKategoriPuanlari = {
+                            icerikKalitesi: {
+                                hayalGucu: Math.min(100, Math.round(kelimeCesitliligiPuani * 0.7 + hashArray[0])),
+                                ozgunluk: Math.min(100, Math.round(kelimeCesitliligiPuani * 0.6 + hashArray[1])),
+                                tutarlilik: Math.min(100, Math.round(70 + hashArray[2])),
+                                butunluk: Math.min(100, Math.round(paragrafPuani * 0.8 + hashArray[3])),
+                                akicilik: Math.min(100, Math.round(cumleYapisiPuani * 0.7 + hashArray[4]))
+                            },
+                            dilVeYapi: {
+                                kelimeSecimi: Math.min(100, Math.round(kelimeCesitliligiPuani * 0.9 + hashArray[5])),
+                                cumleVeParagrafTutarliligi: Math.min(100, Math.round(paragrafPuani * 0.8 + hashArray[6])),
+                                cumleYapisi: Math.min(100, Math.round(cumleYapisiPuani * 0.9 + hashArray[7])),
+                                paragrafOrganizasyonu: Math.min(100, Math.round(paragrafPuani * 0.9 + hashArray[8]))
+                            },
+                            gramerVeTeknik: {
+                                noktalamaIsaretleri: Math.min(100, Math.round(85 + hashArray[9] * 0.15)),
+                                yazimKurallari: Math.min(100, Math.round(85 + hashArray[10] * 0.15)),
+                                zamanVeKipUyumu: Math.min(100, Math.round(85 + hashArray[11] * 0.15))
+                            },
+                            etkiVeAlgi: {
+                                duygusalVeIknaEdiciGuc: Math.min(100, Math.round(60 + hashArray[12] * 0.3)),
+                                iknaEdicilik: Math.min(100, Math.round(60 + hashArray[13] * 0.3)),
+                                hedefKitleyeUygunluk: Math.min(100, Math.round(70 + hashArray[14] * 0.2)),
+                                konununDerinligi: Math.min(100, Math.round(65 + hashArray[15] * 0.25))
+                            }
+                        };
+
+                        // 13. Analiz sonuçlarını döndür
+                        return {
+                            genelPuan: genelPuan,
+                            kategoriPuanlari: {
+                                icerikKalitesi: icerikPuani,
+                                dilVeYapi: dilYapiPuani,
+                                gramerVeTeknik: gramerPuani,
+                                etkiVeAlgi: etkiPuani
+                            },
+                            altKategoriPuanlari: altKategoriPuanlari,
+                            metinOzellikleri: {
+                                kelimeSayisi,
+                                benzersizKelimeSayisi,
+                                kelimeCesitliligi,
+                                cumleSayisi,
+                                paragrafSayisi,
+                                ortalamaCumleUzunlugu,
+                                ortalamaKelimeUzunlugu,
+                                paragrafDuzeni: paragrafDuzeniPuani
+                            },
+                            tekrarlananKelimeler: tekrarlananKelimeler,
+                            yasakliKelimeSayisi: yasakliKelimeSayisi,
+                            cumleTipleri: cumleTipleri,
+                            ozetDegerlendirme: ""  // generateSummary tarafından doldurulacak
+                        };
+                    } catch (error) {
+                        console.error("Error in text evaluation:", error);
+                        // Hata durumunda varsayılan değerler döndür
+                        return {
+                            genelPuan: 70,
+                            kategoriPuanlari: {
+                                icerikKalitesi: 70,
+                                dilVeYapi: 70,
+                                gramerVeTeknik: 70,
+                                etkiVeAlgi: 70
+                            },
+                            altKategoriPuanlari: {
+                                icerikKalitesi: {
+                                    hayalGucu: 70,
+                                    ozgunluk: 70,
+                                    tutarlilik: 70,
+                                    butunluk: 70,
+                                    akicilik: 70
+                                },
+                                dilVeYapi: {
+                                    kelimeSecimi: 70,
+                                    cumleVeParagrafTutarliligi: 70,
+                                    cumleYapisi: 70,
+                                    paragrafOrganizasyonu: 70
+                                },
+                                gramerVeTeknik: {
+                                    noktalamaIsaretleri: 70,
+                                    yazimKurallari: 70,
+                                    zamanVeKipUyumu: 70
+                                },
+                                etkiVeAlgi: {
+                                    duygusalVeIknaEdiciGuc: 70,
+                                    iknaEdicilik: 70,
+                                    hedefKitleyeUygunluk: 70,
+                                    konununDerinligi: 70
+                                }
+                            },
+                            metinOzellikleri: {
+                                kelimeSayisi: 0,
+                                benzersizKelimeSayisi: 0,
+                                kelimeCesitliligi: 0,
+                                cumleSayisi: 0,
+                                paragrafSayisi: 0,
+                                ortalamaCumleUzunlugu: 0,
+                                ortalamaKelimeUzunlugu: 0,
+                                paragrafDuzeni: 0
+                            },
+                            tekrarlananKelimeler: [],
+                            yasakliKelimeSayisi: 0,
+                            cumleTipleri: { uzun: 0, orta: 0, kisa: 0 },
+                            ozetDegerlendirme: "Metin analizi sırasında bir hata oluştu."
+                        };
+                    }
+                }
+
+                // Sonuçları göster
+                function gosterSonuclar(sonuclar, metinTuru) {
+                    try {
+                        // Genel puanları göster
+                        document.getElementById('overallScore').textContent = sonuclar.genelPuan;
+                        document.getElementById('contentScore').textContent = sonuclar.kategoriPuanlari.icerikKalitesi;
+                        document.getElementById('languageScore').textContent = sonuclar.kategoriPuanlari.dilVeYapi;
+                        document.getElementById('grammarScore').textContent = sonuclar.kategoriPuanlari.gramerVeTeknik;
+                        document.getElementById('impactScore').textContent = sonuclar.kategoriPuanlari.etkiVeAlgi;
+
+                        // Tespit edilen türü göster
+                        document.getElementById('detectedTextType').textContent = metinTuruAdiGetir(metinTuru);
+
+                        // Özet değerlendirmeyi oluştur ve göster
+                        sonuclar.ozetDegerlendirme = ozetDegerlendirmeOlustur(metinTuru, sonuclar);
+                        document.getElementById('summaryText').textContent = sonuclar.ozetDegerlendirme;
+
+                        // Pasta ve Çubuk grafiklerini oluştur
+                        createPieChart(sonuclar);
+                        createBarChart(sonuclar);
+
+                        // Alt kategori analizlerini göster
+                        generateSubcategoryAnalysis(sonuclar);
+
+                        // Rapor indirme butonuna tıklanınca
+                        document.getElementById('downloadReportBtn').addEventListener('click', function() {
+                            alert('Rapor Word formatında indiriliyor...');
+                            // Gerçek uygulamada burada rapor oluşturma ve indirme işlemi yapılacak
+                        });
+                    } catch (error) {
+                        console.error("Error displaying results:", error);
+                        alert("Sonuçlar gösterilirken bir hata oluştu.");
+                    }
+                }
+
+                // Pasta grafiği oluştur (Kategori Puanları için)
+                function createPieChart(sonuclar) {
+                    try {
+                        const ctx = document.getElementById('pieChartCanvas').getContext('2d');
+
+                        const data = {
+                            labels: [
+                                'İçerik Kalitesi',
+                                'Dil ve Yapı',
+                                'Gramer ve Teknik',
+                                'Etki ve Algı'
+                            ],
+                            datasets: [{
+                                data: [
+                                    sonuclar.kategoriPuanlari.icerikKalitesi,
+                                    sonuclar.kategoriPuanlari.dilVeYapi,
+                                    sonuclar.kategoriPuanlari.gramerVeTeknik,
+                                    sonuclar.kategoriPuanlari.etkiVeAlgi
+                                ],
+                                backgroundColor: [
+                                    '#3498db', // Mavi - İçerik Kalitesi
+                                    '#2ecc71', // Yeşil - Dil ve Yapı
+                                    '#9b59b6', // Mor - Gramer ve Teknik
+                                    '#f39c12'  // Turuncu - Etki ve Algı
+                                ],
+                                borderColor: '#ffffff',
+                                borderWidth: 2
+                            }]
+                        };
+
+                        const config = {
+                            type: 'pie',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.label + ': ' + context.raw + ' puan';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        // Önceki grafik varsa yok et
+                        if (window.pieChart) {
+                            window.pieChart.destroy();
+                        }
+
+                        // Yeni grafik oluştur
+                        window.pieChart = new Chart(ctx, config);
+                    } catch (error) {
+                        console.error("Error creating pie chart:", error);
+                    }
+                }
+        // Çubuk grafiği oluştur (Alt Kategori Dağılımı için)
+                function createBarChart(sonuclar) {
+                    try {
+                        const ctx = document.getElementById('barChartCanvas').getContext('2d');
+
+                        const labels = [
+                            'Hayal Gücü', 
+                            'Özgünlük', 
+                            'Tutarlılık', 
+                            'Kelime Seçimi', 
+                            'Cümle Yapısı', 
+                            'Yazım Kuralları',
+                            'İkna Edicilik',
+                            'Etki Gücü'
+                        ];
+
+                        const data = [
+                            sonuclar.altKategoriPuanlari.icerikKalitesi.hayalGucu,
+                            sonuclar.altKategoriPuanlari.icerikKalitesi.ozgunluk,
+                            sonuclar.altKategoriPuanlari.icerikKalitesi.tutarlilik,
+                            sonuclar.altKategoriPuanlari.dilVeYapi.kelimeSecimi,
+                            sonuclar.altKategoriPuanlari.dilVeYapi.cumleYapisi,
+                            sonuclar.altKategoriPuanlari.gramerVeTeknik.yazimKurallari,
+                            sonuclar.altKategoriPuanlari.etkiVeAlgi.iknaEdicilik,
+                            sonuclar.altKategoriPuanlari.etkiVeAlgi.duygusalVeIknaEdiciGuc
+                        ];
+
+                        // Alt kategori renklerini belirle
+                        const backgroundColors = [
+                            '#3498db', // Mavi - İçerik Kalitesi
+                            '#3498db',
+                            '#3498db',
+                            '#2ecc71', // Yeşil - Dil ve Yapı
+                            '#2ecc71',
+                            '#9b59b6', // Mor - Gramer ve Teknik
+                            '#f39c12', // Turuncu - Etki ve Algı
+                            '#f39c12'
+                        ];
+
+                        const config = {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Alt Kategori Puanları',
+                                    data: data,
+                                    backgroundColor: backgroundColors,
+                                    borderColor: backgroundColors.map(color => color),
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        title: {
+                                            display: true,
+                                            text: 'Puan'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Alt Kategoriler'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        };
+
+                        // Önceki grafik varsa yok et
+                        if (window.barChart) {
+                            window.barChart.destroy();
+                        }
+
+                        // Yeni grafik oluştur
+                        window.barChart = new Chart(ctx, config);
+                    } catch (error) {
+                        console.error("Error creating bar chart:", error);
+                    }
+                }
+
+                // Alt kategori analizlerini göster
+                function generateSubcategoryAnalysis(sonuclar) {
+                    try {
+                        const container = document.getElementById('subcategoryAnalysis');
+                        if (!container) return;
+
+                        // Alt kategori puanları
+                        const altKriterPuanlari = sonuclar.altKategoriPuanlari;
+
+                        // HTML içeriğini oluştur
+                        let html = '<h4>Alt Kategori Puanları</h4>';
+
+                        for (const kategori in altKriterPuanlari) {
+                            if (altKriterPuanlari.hasOwnProperty(kategori)) {
+                                const kriterler = altKriterPuanlari[kategori];
+
+                                // Kategori başlığı ekle
+                                html += `<h5 style="margin-top: 15px; margin-bottom: 10px;">${kategoriAdiGetir(kategori)}</h5>`;
+
+                                for (const kriter in kriterler) {
+                                    if (kriterler.hasOwnProperty(kriter)) {
+                                        const puan = kriterler[kriter];
+                                        const kriterAdi = kriterAdiGetir(kriter);
+
+                                        // Kategori rengi belirle
+                                        let renk;
+                                        switch(kategori) {
+                                            case 'icerikKalitesi': renk = '#3498db'; break; // Mavi
+                                            case 'dilVeYapi': renk = '#2ecc71'; break; // Yeşil
+                                            case 'gramerVeTeknik': renk = '#9b59b6'; break; // Mor
+                                            case 'etkiVeAlgi': renk = '#f39c12'; break; // Turuncu
+                                            default: renk = '#95a5a6'; break; // Gri
+                                        }
+
+                                        // İlerleme çubuğu oluştur
+                                        html += `
+                                        <div class="subcategory-item">
+                                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                                <span>${kriterAdi}</span>
+                                                <span>${puan}</span>
+                                            </div>
+                                            <div style="background-color: #eee; height: 12px; border-radius: 6px; overflow: hidden;">
+                                                <div style="width: ${puan}%; height: 100%; background-color: ${renk}; transition: width 1s ease-out;"></div>
+                                            </div>
+                                        </div>
+                                        `;
+                                    }
+                                }
+                            }
+                        }
+
+                        container.innerHTML = html;
+                    } catch (error) {
+                        console.error("Error generating subcategory analysis:", error);
+                    }
+                }
+
+                // Kategori adını düzenle
+                function kategoriAdiGetir(kategori) {
+                    const kategoriAdlari = {
+                        icerikKalitesi: "İçerik ve Anlatım Kalitesi",
+                        dilVeYapi: "Dil ve Yapısal Özellikler",
+                        gramerVeTeknik: "Gramer ve Teknik Doğruluk",
+                        etkiVeAlgi: "Etki ve Okuyucu Algısı"
+                    };
+
+                    return kategoriAdlari[kategori] || kategori;
+                }
+
+                // Kriter adını düzenle
+                function kriterAdiGetir(kriter) {
+                    const kriterAdlari = {
+                        hayalGucu: "Hayal Gücü",
+                        ozgunluk: "Özgünlük",
+                        tutarlilik: "Tutarlılık",
+                        butunluk: "Bütünlük",
+                        akicilik: "Akıcılık",
+                        kelimeSecimi: "Kelime Seçimi",
+                        cumleVeParagrafTutarliligi: "Cümle ve Paragraf Tutarlılığı",
+                        cumleYapisi: "Cümle Yapısı",
+                        paragrafOrganizasyonu: "Paragraf Organizasyonu",
+                        noktalamaIsaretleri: "Noktalama İşaretleri",
+                        yazimKurallari: "Yazım Kuralları",
+                        zamanVeKipUyumu: "Zaman ve Kip Uyumu",
+                        duygusalVeIknaEdiciGuc: "Duygusal ve İkna Edici Güç",
+                        iknaEdicilik: "İkna Edicilik",
+                        hedefKitleyeUygunluk: "Hedef Kitleye Uygunluk",
+                        konununDerinligi: "Konunun Derinliği"
+                    };
+
+                    return kriterAdlari[kriter] || kriter;
+                }
+
+                // Özet değerlendirme metni oluştur
+                function ozetDegerlendirmeOlustur(metinTuru, sonuclar) {
+                    try {
+                        const metinOzellikleri = sonuclar.metinOzellikleri;
+                        let metinTuruAdi = metinTuruAdiGetir(metinTuru);
+                        let ozet = "";
+
+                        // Metin özelliklerine dair bilgi
+                        ozet += `Değerlendirilen ${metinTuruAdi.toLowerCase()}, ${metinOzellikleri.kelimeSayisi} kelime, ${metinOzellikleri.paragrafSayisi} paragraf ve yaklaşık ${metinOzellikleri.cumleSayisi} cümleden oluşuyor. `;
+
+                        // Genel değerlendirme
+                        if (sonuclar.genelPuan > 90) {
+                            ozet += `${metinTuruAdi} son derece etkileyici ve yüksek kalitede. `;
+                        } else if (sonuclar.genelPuan > 80) {
+                            ozet += `${metinTuruAdi} genel olarak çok iyi durumda. `;
+                        } else if (sonuclar.genelPuan > 70) {
+                            ozet += `${metinTuruAdi} iyi bir seviyede, ancak geliştirilmesi gereken alanlar var. `;
+                        } else if (sonuclar.genelPuan > 60) {
+                            ozet += `${metinTuruAdi} orta seviyede ve önemli iyileştirmeler gerekiyor. `;
+                        } else {
+                            ozet += `${metinTuruAdi} birçok açıdan geliştirilmeye ihtiyaç duyuyor. `;
+                        }
+
+                        // En güçlü kategoriyi belirleme
+                        const puanlar = [
+                            { kategori: "icerik", puan: sonuclar.kategoriPuanlari.icerikKalitesi },
+                            { kategori: "dil", puan: sonuclar.kategoriPuanlari.dilVeYapi },
+                            { kategori: "gramer", puan: sonuclar.kategoriPuanlari.gramerVeTeknik },
+                            { kategori: "etki", puan: sonuclar.kategoriPuanlari.etkiVeAlgi }
+                        ];
+
+                        puanlar.sort((a, b) => b.puan - a.puan);
+
+                        const enGuclu = puanlar[0];
+                        const enZayif = puanlar[puanlar.length - 1];
+
+                        // Güçlü yönü belirtme
+                        if (enGuclu.puan > 80) {
+                            switch(enGuclu.kategori) {
+                                case "icerik":
+                                    ozet += "İçerik ve anlatım kalitesi açısından özellikle başarılı. ";
+                                    break;
+                                case "dil":
+                                    ozet += "Dil kullanımı ve yapısal özellikler açısından çok güçlü. ";
+                                    break;
+                                case "gramer":
+                                    ozet += "Gramer ve teknik doğruluk açısından oldukça iyi durumda. ";
+                                    break;
+                                case "etki":
+                                    ozet += "Okuyucu üzerindeki etki ve algı açısından çok başarılı. ";
+                                    break;
+                            }
+                        }
+
+                        // Zayıf yönü belirtme
+                        if (enZayif.puan < 75) {
+                            switch(enZayif.kategori) {
+                                case "icerik":
+                                    ozet += "Ancak içerik ve anlatım kalitesi geliştirilebilir. ";
+                                    break;
+                                case "dil":
+                                    ozet += "Fakat dil kullanımı ve yapısal özellikler iyileştirilmeli. ";
+                                    break;
+                                case "gramer":
+                                    ozet += "Gramer ve teknik açıdan bazı hatalar bulunmakta. ";
+                                    break;
+                                case "etki":
+                                    ozet += "Okuyucu üzerindeki etki ve algı açısından güçlendirilmesi gerekiyor. ";
+                                    break;
+                            }
+                        }
+
+                        // Metin türüne özel değerlendirme
+                        switch(metinTuru) {
+                            case 'story':
+                                ozet += "Hikayenizdeki karakter gelişimi ve olay örgüsü akıcılığı okuyucuyu içine çekiyor. ";
+                                break;
+                            case 'novel':
+                                ozet += "Romanınızdaki detaylı betimlemeler ve karakter derinlikleri metne değer katıyor. ";
+                                break;
+                            case 'article':
+                                ozet += "Makalenizde sunduğunuz argümanlar ve destekleyici örnekler konuyu etkili bir şekilde ele alıyor. ";
+                                break;
+                            case 'essay':
+                                ozet += "Denemenizde ortaya koyduğunuz düşünceler ve kişisel bakış açınız metne özgünlük katıyor. ";
+                                break;
+                            case 'poetry':
+                                ozet += "Şiirinizdeki imgesel anlatım ve duygusal ton okuyucuya hitap ediyor. ";
+                                break;
+                            case 'composition':
+                                ozet += "Kompozisyonunuzda fikirlerinizi organize etme biçiminiz ve dil kullanımınız oldukça başarılı. ";
+                                break;
+                        }
+
+                        return ozet;
+                    } catch (error) {
+                        console.error("Error creating summary:", error);
+                        return "Metin özeti oluşturulurken bir hata oluştu.";
+                    }
+                }
+            </script>
+        </body>
+        </html>

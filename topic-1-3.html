@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP CSP - Topic 1.3: Program Design and Development</title>
+  <style>
+    :root {
+      --primary: #4a2c8f;
+      --primary-light: #6b45c2;
+      --primary-dark: #36206a;
+      --secondary: #ff7b00;
+      --secondary-light: #ff9a3f;
+      --secondary-dark: #cc6200;
+      --white: #ffffff;
+      --light: #f5f5f5;
+      --gray: #e0e0e0;
+      --dark: #333333;
+      --success: #28a745;
+      --success-light: #d4edda;
+      --success-border: #c3e6cb;
+      --danger: #dc3545;
+      --danger-light: #f8d7da;
+      --danger-border: #f5c6cb;
+      --warning: #ffc107;
+      --warning-light: #fff3cd;
+      --info: #17a2b8;
+      --info-light: #d1ecf1;
+      --info-border: #bee5eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: var(--light);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .navbar-btn {
+      background-color: transparent;
+      border: 2px solid var(--white);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .navbar-btn:hover {
+      background-color: var(--white);
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 20px;
+      display: flex;
+      gap: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 150px);
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sidebar-header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px;
+      border-bottom: 5px solid var(--secondary);
+    }
+
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .sidebar-menu {
+      padding: 20px;
+      overflow-y: auto;
+      height: calc(100% - 100px);
+    }
+
+    .menu-section {
+      margin-bottom: 20px;
+    }
+
+    .menu-section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .menu-list {
+      list-style-type: none;
+    }
+
+    .menu-item {
+      margin-bottom: 10px;
+    }
+
+    .menu-link {
+      display: block;
+      padding: 8px 10px;
+      color: var(--dark);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .menu-link:hover {
+      background-color: var(--light);
+      color: var(--primary);
+    }
+
+    .menu-link.active {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      animation: fadeIn 0.6s ease;
+      animation-delay: 0.1s;
+      animation-fill-mode: both;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+      margin: 0 10px;
+      color: var(--gray);
+    }
+
+    .topic-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .topic-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .topic-overview {
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+
+    .learning-objectives {
+      background-color: var(--info-light);
+      border-left: 5px solid var(--info);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+
+    .learning-objectives h3 {
+      color: var(--info);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .objectives-list {
+      list-style-type: none;
+    }
+
+    .objectives-list li {
+      margin-bottom: 10px;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .objectives-list li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--info);
+      font-weight: bold;
+    }
+
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .section-content p {
+      margin-bottom: 15px;
+    }
+
+    .section-content h4 {
+      font-size: 1.2rem;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      margin-top: 25px;
+    }
+
+    .info-card {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 5px solid var(--primary);
+    }
+
+    .info-card h4 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .example-box {
+      background-color: var(--success-light);
+      border-left: 5px solid var(--success);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .example-title {
+      color: var(--success);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .note-box {
+      background-color: var(--warning-light);
+      border-left: 5px solid var(--warning);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .note-title {
+      color: var(--warning);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .code-block {
+      background-color: #f8f9fa;
+      border: 1px solid #eaecef;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+      font-family: 'Courier New', Courier, monospace;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .code-comment {
+      color: #6a737d;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-light);
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--gray);
+    }
+
+    .btn-next {
+      margin-left: auto;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .image-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .caption {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .table-container {
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    th {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--light);
+    }
+
+    tr:hover {
+      background-color: var(--gray);
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        margin-bottom: 30px;
+      }
+
+      .sidebar-menu {
+        height: auto;
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin-top: 80px;
+      }
+
+      .navbar {
+        padding: 12px 20px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .topic-title {
+        font-size: 1.8rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .navigation-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn-next {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">AP CSP Quiz Platform</div>
+    <div class="navbar-actions">
+      <a href="big-idea-1.html" class="navbar-btn">Back to Big Idea 1</a>
+      <a href="main-menu.html" class="navbar-btn">Main Menu</a>
+      <button class="navbar-btn" id="logout-btn">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Topic 1.3</div>
+        <div class="sidebar-subtitle">Program Design and Development</div>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-section">
+          <h3 class="menu-section-title">Content</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="#introduction" class="menu-link active">Introduction</a></li>
+            <li class="menu-item"><a href="#iterative-development" class="menu-link">Iterative Development</a></li>
+            <li class="menu-item"><a href="#program-design" class="menu-link">Program Design Fundamentals</a></li>
+            <li class="menu-item"><a href="#documentation" class="menu-link">Program Documentation</a></li>
+            <li class="menu-item"><a href="#attribution" class="menu-link">Acknowledging Sources</a></li>
+            <li class="menu-item"><a href="#summary" class="menu-link">Summary</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Practice</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-3-quiz.html" class="menu-link">Take Quiz</a></li>
+            <li class="menu-item"><a href="topic-1-3-practice.html" class="menu-link">Practice Exercises</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Related Topics</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-1.html" class="menu-link">1.1 Collaboration</a></li>
+            <li class="menu-item"><a href="topic-1-2.html" class="menu-link">1.2 Program Function and Purpose</a></li>
+            <li class="menu-item"><a href="topic-1-4.html" class="menu-link">1.4 Identifying and Correcting Errors</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="breadcrumb">
+        <a href="main-menu.html">Main Menu</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="big-idea-1.html">Big Idea 1</a>
+        <span class="breadcrumb-separator">›</span>
+        <span>Topic 1.3: Program Design and Development</span>
+      </div>
+
+      <div class="topic-header">
+        <h1 class="topic-title">Program Design and Development</h1>
+        <p class="topic-overview">Understand the systematic process of designing, developing, and maintaining programs through iterative cycles, including documentation and source attribution.</p>
+
+        <div class="learning-objectives">
+          <h3>Learning Objectives</h3>
+          <ul class="objectives-list">
+            <li>Describe the development process of programs with an iterative approach (CRD-2.A)</li>
+            <li>Explain how programs are developed and maintained through iterative processes (CRD-2.B)</li>
+            <li>Identify and use appropriate documentation in program development (CRD-2.C)</li>
+            <li>Evaluate the importance of acknowledging and citing sources in program development (CRD-2.D)</li>
+            <li>Apply standard design principles to create programs (CRD-2.E)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Introduction Section -->
+      <section class="content-section" id="introduction">
+        <h2 class="section-title">Introduction to Program Design and Development</h2>
+        <div class="section-content">
+          <p>Program design and development is the systematic process of creating software applications that solve specific problems or meet certain needs. This process involves planning, coding, testing, and refining programs to ensure they function correctly and efficiently.</p>
+
+          <p>Professional software developers rarely write complete programs in a single attempt. Instead, they use an iterative approach that involves gradually developing and refining their code over multiple cycles.</p>
+
+          <div class="info-card">
+            <h4>Key Definition</h4>
+            <p><strong>Program Design and Development</strong> is the process of planning, creating, testing, and maintaining computer programs to solve problems effectively. This process involves creating algorithms, writing code, testing functionality, and iteratively refining the program.</p>
+          </div>
+
+          <div class="image-container">
+            <img src="/api/placeholder/600/300" alt="Program Development Lifecycle diagram showing planning, development, testing, and maintenance phases">
+            <p class="caption">Figure 1: The program development lifecycle illustrates the iterative nature of software development.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Iterative Development Section -->
+      <section class="content-section" id="iterative-development">
+        <h2 class="section-title">Iterative Development Process</h2>
+        <div class="section-content">
+          <p>Iterative development is a methodology that involves developing a program in small, incremental steps rather than attempting to create the entire program at once. Each iteration adds new functionality or improves existing features.</p>
+
+          <h4>Stages of the Iterative Development Process</h4>
+          <p>The iterative development process typically includes the following stages:</p>
+
+          <ol>
+            <li><strong>Planning and Requirements Analysis:</strong> Defining what the program should do and how it should behave</li>
+            <li><strong>Design:</strong> Creating algorithms and planning the structure of the program</li>
+            <li><strong>Implementation:</strong> Writing the actual code based on the design</li>
+            <li><strong>Testing:</strong> Checking that the code works as expected</li>
+            <li><strong>Evaluation and Refinement:</strong> Identifying and fixing issues, improving functionality</li>
+            <li><strong>Repeat:</strong> Going back to planning with new insights to add features or make improvements</li>
+          </ol>
+
+          <div class="example-box">
+            <h4 class="example-title">Real-World Example: Mobile App Development</h4>
+            <p>Consider the development of a mobile app for tracking fitness activities:</p>
+            <ul>
+              <li><strong>Iteration 1:</strong> Basic user interface and the ability to record walking distance</li>
+              <li><strong>Iteration 2:</strong> Add functionality to track different types of exercises</li>
+              <li><strong>Iteration 3:</strong> Implement calorie tracking based on activity type</li>
+              <li><strong>Iteration 4:</strong> Add user profiles and history tracking</li>
+              <li><strong>Iteration 5:</strong> Incorporate social sharing features</li>
+            </ul>
+            <p>Each iteration builds upon the previous one, with testing and refinement occurring throughout the process. This approach allows developers to deliver a working product early and continually improve it based on feedback and new requirements.</p>
+          </div>
+
+          <h4>Benefits of Iterative Development</h4>
+          <p>Iterative development offers several advantages in program creation:</p>
+
+          <ul>
+            <li><strong>Early Feedback:</strong> Developers can get feedback on portions of the program before the entire project is complete</li>
+            <li><strong>Risk Reduction:</strong> Issues can be identified and addressed early in the development process</li>
+            <li><strong>Adaptability:</strong> The development approach can be adjusted based on changing requirements or feedback</li>
+            <li><strong>Incremental Progress:</strong> Visible progress is made throughout the development process</li>
+            <li><strong>Improved Quality:</strong> Each iteration provides an opportunity to refine and improve the program</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Program Design Section -->
+      <section class="content-section" id="program-design">
+        <h2 class="section-title">Program Design Fundamentals</h2>
+        <div class="section-content">
+          <p>Program design is the process of conceptualizing and planning a program before writing the actual code. Good design makes programs easier to develop, test, and maintain.</p>
+
+          <h4>Key Program Design Principles</h4>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Design Principle</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Modularity</td>
+                  <td>Breaking down a program into smaller, independent components or modules that can be developed, tested, and maintained separately</td>
+                </tr>
+                <tr>
+                  <td>Abstraction</td>
+                  <td>Hiding implementation details while providing a simplified interface for using functionality</td>
+                </tr>
+                <tr>
+                  <td>Decomposition</td>
+                  <td>Breaking a complex problem into smaller, more manageable subproblems</td>
+                </tr>
+                <tr>
+                  <td>Reusability</td>
+                  <td>Designing components that can be used in multiple programs or contexts</td>
+                </tr>
+                <tr>
+                  <td>Readability</td>
+                  <td>Writing code that is easy for humans to read and understand</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>Design Approaches</h4>
+          <p>Different approaches can be used when designing programs:</p>
+
+          <ul>
+            <li><strong>Top-Down Design:</strong> Starting with a high-level overview of the system and breaking it down into smaller components</li>
+            <li><strong>Bottom-Up Design:</strong> Building small, simple components and combining them to create more complex functionality</li>
+            <li><strong>Object-Oriented Design:</strong> Organizing the program around objects that contain data and behavior</li>
+            <li><strong>Functional Design:</strong> Focusing on functions that transform data without changing state</li>
+          </ul>
+
+          <div class="code-block">
+<span class="code-comment"># Example of modular design in Python</span>
+<span class="code-comment"># Breaking down a temperature conversion program into functions</span>
+
+def celsius_to_fahrenheit(celsius):
+    """Convert Celsius to Fahrenheit"""
+    return (celsius * 9/5) + 32
+
+def fahrenheit_to_celsius(fahrenheit):
+    """Convert Fahrenheit to Celsius"""
+    return (fahrenheit - 32) * 5/9
+
+def kelvin_to_celsius(kelvin):
+    """Convert Kelvin to Celsius"""
+    return kelvin - 273.15
+
+def celsius_to_kelvin(celsius):
+    """Convert Celsius to Kelvin"""
+    return celsius + 273.15
+
+def display_menu():
+    """Display the menu of conversion options"""
+    print("Temperature Conversion Program")
+    print("1. Celsius to Fahrenheit")
+    print("2. Fahrenheit to Celsius")
+    print("3. Kelvin to Celsius")
+    print("4. Celsius to Kelvin")
+    print("5. Exit")
+
+<span class="code-comment"># Main program uses the modules above</span>
+def main():
+    while True:
+        display_menu()
+        choice = input("Enter your choice (1-5): ")
+        
+        if choice == '5':
+            break
+            
+        temperature = float(input("Enter temperature: "))
+        
+        if choice == '1':
+            result = celsius_to_fahrenheit(temperature)
+            print(f"{temperature}°C = {result}°F")
+        elif choice == '2':
+            result = fahrenheit_to_celsius(temperature)
+            print(f"{temperature}°F = {result}°C")
+        # Other options would be handled similarly
+</div>
+        </div>
+      </section>
+
+      <!-- Documentation Section -->
+      <section class="content-section" id="documentation">
+        <h2 class="section-title">Program Documentation</h2>
+        <div class="section-content">
+          <p>Documentation is the written explanation of what a program does, how it works, and how to use it. Good documentation is essential for program development, maintenance, and collaboration.</p>
+
+          <h4>Types of Documentation</h4>
+          <p>Program documentation typically includes:</p>
+
+          <ul>
+            <li><strong>Comments:</strong> Notes within the code that explain how and why specific parts work</li>
+            <li><strong>Function/Method Documentation:</strong> Descriptions of what functions do, their parameters, and return values</li>
+            <li><strong>User Documentation:</strong> Instructions for end-users on how to use the program</li>
+            <li><strong>Technical Documentation:</strong> Detailed information for developers about the program architecture, APIs, etc.</li>
+            <li><strong>Change Logs:</strong> Records of changes made to the program over time</li>
+          </ul>
+
+          <div class="info-card">
+            <h4>Why Documentation Matters</h4>
+            <p>Documentation serves multiple important purposes:</p>
+            <ul>
+              <li>Helps current developers understand the code</li>
+              <li>Makes it easier for new developers to join a project</li>
+              <li>Assists with troubleshooting and debugging</li>
+              <li>Facilitates maintenance and future development</li>
+              <li>Provides guidance for users of the program</li>
+            </ul>
+          </div>
+
+          <h4>Best Practices for Documentation</h4>
+          <p>Effective documentation follows these guidelines:</p>
+
+          <ul>
+            <li><strong>Be Clear and Concise:</strong> Use clear language and avoid unnecessary verbosity</li>
+            <li><strong>Keep Documentation Updated:</strong> Update documentation when code changes</li>
+            <li><strong>Document As You Code:</strong> Write documentation while developing, not after</li>
+            <li><strong>Focus on Why, Not Just How:</strong> Explain the reasoning behind implementation choices</li>
+            <li><strong>Use Consistent Formatting:</strong> Follow a consistent style for comments and documentation</li>
+          </ul>
+
+          <div class="code-block">
+<span class="code-comment"># Example of good code documentation in Python</span>
+
+def calculate_bmi(weight, height):
+    """
+    Calculate Body Mass Index (BMI) using weight and height.
+    
+    Parameters:
+    weight (float): Weight in kilograms
+    height (float): Height in meters
+    
+    Returns:
+    float: The calculated BMI value rounded to one decimal place
+    
+    Raises:
+    ValueError: If weight or height is not positive
+    """
+    # Validate input parameters
+    if weight <= 0 or height <= 0:
+        raise ValueError("Weight and height must be positive values")
+    
+    # Calculate BMI using the standard formula: weight / (height^2)
+    bmi = weight / (height ** 2)
+    
+    # Round to one decimal place and return
+    return round(bmi, 1)
+</div>
+        </div>
+      </section>
+
+      <!-- Attribution Section -->
+      <section class="content-section" id="attribution">
+        <h2 class="section-title">Acknowledging Sources in Program Development</h2>
+        <div class="section-content">
+          <p>In program development, it's important to acknowledge and cite sources of code, algorithms, or other intellectual property that you use but did not create yourself. This is both an ethical practice and, in many cases, a legal requirement.</p>
+
+          <h4>Why Attribution Matters</h4>
+          <p>Properly acknowledging sources:</p>
+
+          <ul>
+            <li><strong>Respects Intellectual Property:</strong> Gives credit to the original creators</li>
+            <li><strong>Complies with Licenses:</strong> Many open-source libraries require attribution</li>
+            <li><strong>Promotes Transparency:</strong> Clarifies which parts of the code were created by others</li>
+            <li><strong>Enables Maintenance:</strong>

@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP CSP - Topic 1.4: Identifying and Correcting Errors</title>
+  <style>
+    :root {
+      --primary: #4a2c8f;
+      --primary-light: #6b45c2;
+      --primary-dark: #36206a;
+      --secondary: #ff7b00;
+      --secondary-light: #ff9a3f;
+      --secondary-dark: #cc6200;
+      --white: #ffffff;
+      --light: #f5f5f5;
+      --gray: #e0e0e0;
+      --dark: #333333;
+      --success: #28a745;
+      --success-light: #d4edda;
+      --success-border: #c3e6cb;
+      --danger: #dc3545;
+      --danger-light: #f8d7da;
+      --danger-border: #f5c6cb;
+      --warning: #ffc107;
+      --warning-light: #fff3cd;
+      --info: #17a2b8;
+      --info-light: #d1ecf1;
+      --info-border: #bee5eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: var(--light);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .navbar-btn {
+      background-color: transparent;
+      border: 2px solid var(--white);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .navbar-btn:hover {
+      background-color: var(--white);
+      color: var(--primary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 20px;
+      display: flex;
+      gap: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 150px);
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sidebar-header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px;
+      border-bottom: 5px solid var(--secondary);
+    }
+
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .sidebar-menu {
+      padding: 20px;
+      overflow-y: auto;
+      height: calc(100% - 100px);
+    }
+
+    .menu-section {
+      margin-bottom: 20px;
+    }
+
+    .menu-section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .menu-list {
+      list-style-type: none;
+    }
+
+    .menu-item {
+      margin-bottom: 10px;
+    }
+
+    .menu-link {
+      display: block;
+      padding: 8px 10px;
+      color: var(--dark);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .menu-link:hover {
+      background-color: var(--light);
+      color: var(--primary);
+    }
+
+    .menu-link.active {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 30px;
+      animation: fadeIn 0.6s ease;
+      animation-delay: 0.1s;
+      animation-fill-mode: both;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb-separator {
+      margin: 0 10px;
+      color: var(--gray);
+    }
+
+    .topic-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    .topic-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .topic-overview {
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+
+    .learning-objectives {
+      background-color: var(--info-light);
+      border-left: 5px solid var(--info);
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+
+    .learning-objectives h3 {
+      color: var(--info);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .objectives-list {
+      list-style-type: none;
+    }
+
+    .objectives-list li {
+      margin-bottom: 10px;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .objectives-list li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--info);
+      font-weight: bold;
+    }
+
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .section-content p {
+      margin-bottom: 15px;
+    }
+
+    .section-content h4 {
+      font-size: 1.2rem;
+      color: var(--primary-dark);
+      margin-bottom: 15px;
+      margin-top: 25px;
+    }
+
+    .info-card {
+      background-color: var(--light);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 5px solid var(--primary);
+    }
+
+    .info-card h4 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .example-box {
+      background-color: var(--success-light);
+      border-left: 5px solid var(--success);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .example-title {
+      color: var(--success);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .note-box {
+      background-color: var(--warning-light);
+      border-left: 5px solid var(--warning);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .note-title {
+      color: var(--warning);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .error-box {
+      background-color: var(--danger-light);
+      border-left: 5px solid var(--danger);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+
+    .error-title {
+      color: var(--danger);
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-light);
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--gray);
+    }
+
+    .btn-next {
+      margin-left: auto;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .image-container {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .caption {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .code-example {
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      border-left: 4px solid var(--primary);
+    }
+
+    .code-error {
+      background-color: #fff0f0;
+      border-left: 4px solid var(--danger);
+    }
+
+    .code-fixed {
+      background-color: #f0fff0;
+      border-left: 4px solid var(--success);
+    }
+
+    .highlight {
+      background-color: rgba(255, 123, 0, 0.2);
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .table-container {
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray);
+    }
+
+    th {
+      background-color: var(--primary-light);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--light);
+    }
+
+    tr:hover {
+      background-color: var(--gray);
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        margin-bottom: 30px;
+      }
+
+      .sidebar-menu {
+        height: auto;
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin-top: 80px;
+      }
+
+      .navbar {
+        padding: 12px 20px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .topic-title {
+        font-size: 1.8rem;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .navigation-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn-next {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">AP CSP Quiz Platform</div>
+    <div class="navbar-actions">
+      <a href="big-idea-1.html" class="navbar-btn">Back to Big Idea 1</a>
+      <a href="main-menu.html" class="navbar-btn">Main Menu</a>
+      <button class="navbar-btn" id="logout-btn">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Topic 1.4</div>
+        <div class="sidebar-subtitle">Identifying and Correcting Errors</div>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-section">
+          <h3 class="menu-section-title">Content</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="#introduction" class="menu-link active">Introduction</a></li>
+            <li class="menu-item"><a href="#error-types" class="menu-link">Types of Errors</a></li>
+            <li class="menu-item"><a href="#debugging" class="menu-link">Debugging Techniques</a></li>
+            <li class="menu-item"><a href="#testing" class="menu-link">Testing Methodologies</a></li>
+            <li class="menu-item"><a href="#handling-errors" class="menu-link">Error Handling Strategies</a></li>
+            <li class="menu-item"><a href="#summary" class="menu-link">Summary</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Practice</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-4-quiz.html" class="menu-link">Take Quiz</a></li>
+            <li class="menu-item"><a href="topic-1-4-practice.html" class="menu-link">Practice Exercises</a></li>
+          </ul>
+        </div>
+        <div class="menu-section">
+          <h3 class="menu-section-title">Related Topics</h3>
+          <ul class="menu-list">
+            <li class="menu-item"><a href="topic-1-1.html" class="menu-link">1.1 Collaboration</a></li>
+            <li class="menu-item"><a href="topic-1-2.html" class="menu-link">1.2 Program Function and Purpose</a></li>
+            <li class="menu-item"><a href="topic-1-3.html" class="menu-link">1.3 Program Design and Development</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="breadcrumb">
+        <a href="main-menu.html">Main Menu</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="big-idea-1.html">Big Idea 1</a>
+        <span class="breadcrumb-separator">›</span>
+        <span>Topic 1.4: Identifying and Correcting Errors</span>
+      </div>
+
+      <div class="topic-header">
+        <h1 class="topic-title">Identifying and Correcting Errors</h1>
+        <p class="topic-overview">Learn how to identify, address, and prevent errors in algorithms and programs through testing methodologies and debugging techniques.</p>
+
+        <div class="learning-objectives">
+          <h3>Learning Objectives</h3>
+          <ul class="objectives-list">
+            <li>Identify different types of errors in programs (CRD-2.I.1)</li>
+            <li>Apply effective debugging techniques to find and fix errors (CRD-2.I.2)</li>
+            <li>Implement testing methodologies to verify program correctness (CRD-2.J)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Introduction Section -->
+      <section class="content-section" id="introduction">
+        <h2 class="section-title">Introduction to Error Identification and Correction</h2>
+        <div class="section-content">
+          <p>Errors are an inevitable part of the program development process. Even the most experienced programmers make mistakes, and complex programs often contain bugs that need to be identified and corrected. The ability to locate, understand, and fix errors is a critical skill for any programmer or computer scientist.</p>
+
+          <p>Error identification and correction involves several interconnected activities:</p>
+          <ul>
+            <li>Recognizing that an error exists</li>
+            <li>Identifying the specific type of error</li>
+            <li>Locating where in the program the error occurs</li>
+            <li>Understanding why the error is occurring</li>
+            <li>Implementing a solution to fix the error</li>
+            <li>Verifying that the solution addresses the problem without introducing new issues</li>
+          </ul>
+
+          <div class="info-card">
+            <h4>Why Error Correction Matters</h4>
+            <p>Effective error correction is crucial because:</p>
+            <ul>
+              <li><strong>Reliability</strong>: Programs with errors may produce incorrect results or behave unpredictably</li>
+              <li><strong>User Experience</strong>: Errors can frustrate users and diminish confidence in the software</li>
+              <li><strong>Security</strong>: Some errors can create vulnerabilities that malicious actors might exploit</li>
+              <li><strong>Maintenance</strong>: Unaddressed errors tend to compound over time, making the software increasingly difficult to maintain</li>
+            </ul>
+          </div>
+
+          <p>In this topic, we'll explore the different types of errors that can occur in programs, techniques for debugging and identifying the source of errors, methodologies for testing programs to verify their correctness, and strategies for handling errors gracefully when they do occur.</p>
+
+          <div class="image-container">
+            <img src="/api/placeholder/600/300" alt="A programmer debugging code with highlighted errors">
+            <p class="caption">Figure 1: Debugging is a systematic process of identifying and fixing errors in code.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Types of Errors Section -->
+      <section class="content-section" id="error-types">
+        <h2 class="section-title">Types of Errors in Programs</h2>
+        <div class="section-content">
+          <p>Understanding the different types of errors that can occur in programs is the first step toward effective error correction. Programming errors typically fall into three main categories: syntax errors, runtime errors, and logic errors.</p>
+
+          <h4>Syntax Errors</h4>
+          <p>Syntax errors occur when the code violates the grammar rules of the programming language. These errors are detected by the compiler or interpreter before the program runs.</p>
+
+          <div class="error-box">
+            <h4 class="error-title">Syntax Error Examples</h4>
+            <div class="code-example code-error">
+// Missing semicolon
+let x = 5
+console.log(x);
+
+// Mismatched parentheses
+if (x > 10 {
+  console.log("x is greater than 10");
+}
+
+// Misspelled keyword
+fore (let i = 0; i < 10; i++) {
+  console.log(i);
+}</div>
+          </div>
+
+          <p>Syntax errors are generally the easiest to fix because:</p>
+          <ul>
+            <li>They prevent the program from running, so they're immediately noticeable</li>
+            <li>The compiler or interpreter usually provides specific error messages indicating the problem</li>
+            <li>Many modern development environments automatically highlight syntax errors as you type</li>
+          </ul>
+
+          <h4>Runtime Errors</h4>
+          <p>Runtime errors occur during program execution when the program attempts an operation that's impossible to carry out. These errors cause the program to crash or terminate unexpectedly.</p>
+
+          <div class="error-box">
+            <h4 class="error-title">Runtime Error Examples</h4>
+            <div class="code-example code-error">
+// Division by zero
+function divide(a, b) {
+  return a / b;  // Crashes if b is zero
+}
+console.log(divide(10, 0));
+
+// Accessing undefined properties
+let user = { name: "Alice" };
+console.log(user.age.toString());  // Crashes because user.age is undefined
+
+// Array index out of bounds
+let numbers = [1, 2, 3];
+console.log(numbers[5]);  // Accessing an element outside the array limits</div>
+          </div>
+
+          <p>Runtime errors can be more challenging to identify than syntax errors because:</p>
+          <ul>
+            <li>They only occur under specific conditions or inputs</li>
+            <li>They might occur infrequently or in parts of the program that are rarely executed</li>
+            <li>They may appear far from the actual source of the problem</li>
+          </ul>
+
+          <h4>Logic Errors</h4>
+          <p>Logic errors occur when the program runs without crashing but produces incorrect results due to flaws in the algorithm or implementation. These are often the most difficult errors to detect because the program appears to run normally.</p>
+
+          <div class="error-box">
+            <h4 class="error-title">Logic Error Examples</h4>
+            <div class="code-example code-error">
+// Incorrect comparison operator
+function isAdult(age) {
+  return age = 18;  // Uses assignment (=) instead of comparison (>=)
+}
+
+// Off-by-one error
+function sumArray(arr) {
+  let sum = 0;
+  for (let i = 1; i <= arr.length; i++) {  // Starts at 1 (missing first element)
+    sum += arr[i];  // and goes beyond last element
+  }
+  return sum;
+}
+
+// Incorrect logic in calculation
+function calculateAreaOfCircle(radius) {
+  return 2 * Math.PI * radius;  // Formula for circumference, not area
+}</div>
+          </div>
+
+          <p>Logic errors are particularly challenging because:</p>
+          <ul>
+            <li>They don't generate error messages</li>
+            <li>The program continues to run, giving the impression that everything is working correctly</li>
+            <li>They may only be detectable by carefully checking the program's output against expected results</li>
+            <li>They often require a deep understanding of the intended behavior of the program</li>
+          </ul>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Error Type</th>
+                  <th>When Detected</th>
+                  <th>Impact</th>
+                  <th>Detection Difficulty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Syntax Errors</td>
+                  <td>Compile/parse time</td>
+                  <td>Program won't run</td>
+                  <td>Easy - highlighted by compiler/editor</td>
+                </tr>
+                <tr>
+                  <td>Runtime Errors</td>
+                  <td>During execution</td>
+                  <td>Program crashes</td>
+                  <td>Moderate - error messages provide clues</td>
+                </tr>
+                <tr>
+                  <td>Logic Errors</td>
+                  <td>Not automatically detected</td>
+                  <td>Incorrect results</td>
+                  <td>Difficult - requires testing and analysis</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="note-box">
+            <h4 class="note-title">AP Exam Tip</h4>
+            <p>For the AP CSP exam, you should be able to identify the type of error present in a given code segment and explain why it would cause the program to fail or produce incorrect results. Focus on understanding the differences between syntax, runtime, and logic errors.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Debugging Techniques Section -->
+      <section class="content-section" id="debugging">
+        <h2 class="section-title">Debugging Techniques</h2>
+        <div class="section-content">
+          <p>Debugging is the process of identifying and fixing errors in a program. Effective debugging requires a systematic approach and a toolkit of techniques to locate and understand the source of problems.</p>
+
+          <h4>Print Statements / Logging</h4>
+          <p>One of the simplest and most widely used debugging techniques is adding print statements (or logging) to display the values of variables and the flow of execution.</p>
+
+          <div class="example-box">
+            <h4 class="example-title">Using Print Statements for Debugging</h4>
+            <div class="code-example">
+function calculateTotal(prices, tax) {
+  console.log("Prices:", prices); // Log input array
+  console.log("Tax rate:", tax);  // Log tax rate
+
+  let subtotal = 0;
+  for (let i = 0; i < prices.length; i++) {
+    subtotal += prices[i];
+    console.log(`After adding item ${i}, subtotal is ${subtotal}`); // Track loop progress
+  }
+
+  let total = subtotal * (1 + tax);
+  console.log("Final total:", total); // Log final result
+  return total;
+}</div>
+          </div>
+
+          <p>Benefits of print statement debugging:</p>
+          <ul>
+            <li>Works in any environment</li>
+            <li>Simple to implement</li>
+            <li>Helps track the flow of execution and state changes</li>
+          </ul>
+
+          <p>Limitations:</p>
+          <ul>
+            <li>Can clutter the code</li>
+            <li>May need to be removed after debugging</li>
+            <li>Not efficient for complex programs or large amounts of data</li>
+          </ul>
+
+          <h4>Using a Debugger</h4>
+          <p>A debugger is a specialized tool that allows you to pause program execution, step through code line by line, and inspect the values of variables at each step.</p>
+
+          <p>Key debugger features include:</p>
+
+          <ul>
+            <li><strong>Breakpoints</strong>: Places in the code where execution will pause</li>
+            <li><strong>Step-by-step execution</strong>: Run the program one line at a time</li>
+            <li><strong>Variable inspection</strong>: View and sometimes modify the values of variables during execution</li>
+            <li><strong>Call stack examination</strong>: See the sequence of function calls that led to the current point</li>
+            <li><strong>Conditional breakpoints</strong>: Pause execution only when certain conditions are met</li>
+          </ul>
+
+          <div class="image-container">
+            <img src="/api/placeholder/600/300" alt="Screenshot of a debugger showing breakpoints, variable values, and call stack">
+            <p class="caption">Figure 2: A typical debugger interface with code, breakpoints, and variable inspection panels.</p>
+          </div>
+
+          <h4>Rubber Duck Debugging</h4>
+          <p>Rubber duck debugging is a method of debugging by explaining the code, line by line, to an inanimate object (traditionally a rubber duck). The process of vocalizing the code's logic often helps the programmer identify the problem.</p>
+
+          <p>Steps in rubber duck debugging:</p>
+          <ol>
+            <li>Explain the purpose of the code section</li>
+            <li>Describe what each line of code is supposed to do</li>
+            <li>Walk through the expected flow and outcomes</li>
+            <li>Compare the expected behavior with the actual behavior</li>
+          </ol>
+
+          <p>This technique works because explaining the code forces you to think about it more carefully and can reveal assumptions or misconceptions that led to the error.</p>
+
+          <h4>Systematic Error Localization</h4>
+          <p>When faced with a complex error, a systematic approach to narrowing down the location can be effective:</p>
+
+          <ul>
+            <li><strong>Binary search debugging</strong>: Comment out half of the code to see if the error still occurs, then recursively narrow down the section containing the error</li>
+            <li><strong>Simplification</strong>: Create a simplified version of the program that still exhibits the error</li>
+            <li><strong>Divide and conquer</strong>: Test components in isolation to identify which part contains the error</li>
+            <li><strong>Contrasting working vs. non-working states</strong>: Compare versions of the code that work with those that don't to identify what changed</li>
+          </ul>
+
+          <div class="example-box">
+            <h4 class="example-title">Debugging Process Example</h4>
+            <p>Consider a program that's supposed to calculate the average of an array of numbers but is giving incorrect results:</p>
+
+            <div class="code-example code-error">
+function calculateAverage(numbers) {
+  let sum = 0;
+  for (let i = 1; i < numbers.length; i++) {
+    sum += numbers[i];
+  }
+  return sum / numbers.length;
+}</div>
+
+            <p><strong>Debugging steps:</strong></p>
+            <ol>
+              <li>Identify the symptom: The average is consistently lower than expected</li>
+              <li>Add print statements to track values:
+                <div class="code-example">
+function calculateAverage(numbers) {
+  console.log("Input array:", numbers);
+  let sum = 0;
+  for (let i = 1; i < numbers.length; i++) {
+    sum += numbers[i];
+    console.log(`i=${i}, numbers[i]=${numbers[i]}, sum=${sum}`);
+  }
+  let average = sum / numbers.length;
+  console.log(`Final sum: ${sum}, average: ${average}`);
+  return average;
+}</div>
+              </li>
+              <li>Analyze the output: Notice that the loop starts at index 1, not 0</li>
+              <li>Fix the error:
+                <div class="code-example code-fixed">
+function calculateAverage(numbers) {
+  let sum = 0;
+  for (let i = 0; i < numbers.length; i++) {  // Start from 0 instead of 1
+    sum += numbers[i];
+  }
+  return sum / numbers.length;
+}</div>
+              </li>
+              <li>Verify the fix: Test the function with various inputs to ensure it now produces correct results</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testing Methodologies Section -->
+      <section class="content-section" id="testing">
+        <h2 class="section-title">Testing Methodologies</h2>
+        <div class="section-content">
+          <p>Testing is a critical part of program development that helps identify errors before they affect users. Effective testing involves a systematic approach to verifying that a program behaves as expected under various conditions.</p>
+
+          <h4>Types of Testing</h4>
+
+          <p><strong>Unit Testing</strong></p>
+          <p>Unit testing involves testing individual components or functions in isolation to ensure they work correctly on their own.</p>
+
+          <div class="example-box">
+            <h4 class="example-title">Unit Test Example</h4>
+            <div class="code-example">
+// Function to test
+function isPalindrome(str) {
+  // Remove non-alphanumeric characters and convert to lowercase
+  const cleanStr = str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+
+  // Compare with reversed version
+  const reversedStr = cleanStr.split('').reverse().join('');
+  return cleanStr === reversedStr;
+}
+
+// Unit tests
+console.log("Test 1:", isPalindrome("racecar") === true);        // Simple case
+console.log("Test 2:", isPalindrome("A man, a plan, a canal: Panama") === true);  // With punctuation
+console.log("Test 3:", isPalindrome("hello") === false);         // Not a palindrome
+console.log("Test 4:", isPalindrome("") === true);              // Empty string
+console.log("Test 5:", isPalindrome("12321") === true);         // Numbers</div>
+          </div>
+
+          <p><strong>Integration Testing</strong></p>
+          <p>Integration testing verifies that different components of a program work correctly together when combined.</p>
+
+          <p>For example, testing that:</p>
+          <ul>
+            <li>A user authentication module interacts correctly with a database module</li>
+            <li>A calculation function works properly with the user interface that displays its results</li>
+            <li>Data passed between different parts of the program maintains its integrity</li>
+          </ul>
+
+          <p><strong>System Testing</strong></p>
+          <p>System testing evaluates the complete program to ensure it meets all requirements and works as a whole.</p>
+
+          <p>This includes testing:</p>
+          <ul>
+            <li>End-to-end functionality</li>
+            <li>Performance under expected load</li>
+            <li>Usability from the user's perspective</li>
+            <li>Compatibility with different environments</li>
+          </ul>
+
+          <h4>Test Case Design</h4>
+
+          <p>Effective testing requires carefully designed test cases that cover various scenarios. Consider including:</p>
+
+          <p><strong>Normal Cases</strong></p>
+          <p>Test the program with typical, expected inputs where it should function correctly.</p>
+
+          <p><strong>Edge Cases</strong></p>
+          <p>Test boundary conditions where the program's behavior might change:</p>
+          <ul>
+            <li>Empty inputs (empty strings, arrays, etc.)</li>
+            <li>Minimum and maximum values</li>
+            <li>Single-element collections</li>
+            <li>First and last elements in a sequence</li>
+          </ul>
+
+          <p><strong>Error Cases</strong></p>
+          <p>Test how the program handles invalid or unexpected inputs:</p>
+          <ul>
+            <li>Invalid input types (e.g., strings where numbers are expected)</li>
+            <li>Out-of-range values</li>
+            <li>Missing required values</li>
+            <li>Malformed data</li>
+          </ul>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Test Case Type</th>
+                  <th>Example for a Function that Calculates Square Root</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Normal Case</td>
+                  <td>Input: 16, Expected Output: 4</td>
+                </tr>
+                <tr>
+                  <td>Edge Case</td>
+                  <td>Input: 0, Expected Output: 0</td>
+                </tr>
+                <tr>
+                  <td>Edge Case</td>
+                  <td>Input: 1, Expected Output: 1</td>
+                </tr>
+                <tr>
+                  <td>Error Case</td>
+                  <td>Input: -1, Expected Output: Error (negative numbers don't have real square roots)</td>
+                </tr>
+                <tr>
+                  <td>Error Case</td>
+                  <td>Input: "abc", Expected Output: Error (input must be a number)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>Automated Testing</h4>
+
+          <p>Automated testing uses software to run predefined tests and compare actual outcomes with expected outcomes. Benefits include:</p>
+
+          <ul>
+            <li><strong>Consistency</strong>: Tests are performed exactly the same way each time</li>
+            <li><strong>Efficiency</strong>: Can run hundreds or thousands of tests quickly</li>
+            <li><strong>Regression testing</strong>: Easily verify that new changes haven't broken existing functionality</li>
+            <li><strong>Documentation</strong>: Tests serve as executable documentation of how the code should behave</li>
+          </ul>
+
+          <div class="example-box">
+            <h4 class="example-title">Simple Automated Testing Framework</h4>
+            <div class="code-example">
+// A very simple testing framework
+function runTest(testName, testFunction) {
+  try {
+    const result = testFunction();
+    if (result) {
+      console.log(`✓ ${testName}: PASSED`);
+    } else {
+      console.log(`✗ ${testName}: FAILED`);
+    }
+  } catch (error) {
+    console.log(`✗ ${testName}: ERROR - ${error.message}`);
+  }
+}
+
+// Function to test
+function add(a, b) {
+  return a + b;
+}
+
+// Tests
+runTest("Add positive numbers", () => add(2, 3) === 5);
+runTest("Add negative numbers", () => add(-2, -3) === -5);
+runTest("Add zero", () => add(5, 0) === 5);
+runTest("Add decimal numbers", () => Math.abs(add(0.1, 0.2) - 0.3) < 0.0001);</div>
+          </div>
+
+          <div class="note-box">
+            <h4 class="note-title">AP Exam Tip</h4>
+            <p>For the AP CSP exam, you should understand the importance of testing with different types of inputs, including both valid and invalid data. The exam might ask you to identify what a particular test case is checking or to determine if a set of test cases is sufficient to verify a program's correctness.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Error Handling Strategies Section -->
+      <section class="content-section" id="handling-errors">
+        <h2 class="section-title">Error Handling Strategies</h2>
+        <div class="section-content">
+          <p>Even with thorough testing and debugging, unexpected situations can still arise when a program runs. Error handling strategies help programs respond gracefully to unexpected conditions rather than crashing or producing incorrect results.</p>
+
+          <h4>Input Validation</h4>
+          <p>Input validation checks user input before processing to ensure it meets expected criteria. This proactive approach can prevent many errors from occurring in the first place.</p>
+
+          <div class="example-box">
+            <h4 class="example-title">Input Validation Example</h4>
+            <div class="code-example">
+function calculateSquareRoot(number) {
+  // Validate input type
+  if (typeof number !== 'number') {
+    return "Error: Input must be a number";
+  }
+
+  // Validate input range
+  if (number < 0) {
+    return "Error: Cannot calculate square root of a negative number";
+  }
+
+  // Proceed with calculation
+  return Math.sqrt(number);
+}</div>
+          </div>
+
+          <p>Common input validations include checking:</p>
+          <ul>
+            <li>Data type (number, string, etc.)</li>
+            <li>Value range (minimum/maximum values)</li>
+            <li>Format (email addresses, phone numbers, etc.)</li>
+            <li>Required fields (ensuring necessary data is provided)</li>
+            <li>Size limits (preventing overly large inputs)</li>
+          </ul>
+
+          <h4>Try-Catch Blocks</h4>
+          <p>Try-catch blocks allow a program to attempt an operation that might cause an error and handle any exceptions that occur in a controlled manner.</p>
+
+          <div class="example-box">
+            <h4 class="example-title">Try-Catch Example</h4>
+            <div class="code-example">
+function readData(filename) {
+  try {
+    // Attempt to read and parse a JSON file
+    const data = JSON.parse(readFile(filename));
+    return data;
+  } catch (error) {
+    // Handle different types of errors
+    if (error.code === 'ENOENT') {
+      console.error(`File not found: ${filename}`);
+      return null;
+    } else if (error instanceof SyntaxError) {
+      console.error(`Invalid JSON format in file: ${filename}`);
+      return null;
+    } else {
+      console.error(`Unexpected error: ${error.message}`);
+      return null;
+    }
+  }
+}</div>
+          </div>
+
+          <p>Benefits of try-catch blocks:</p>
+          <ul>
+            <li>Prevents program crashes due to unexpected errors</li>
+            <li>Allows specific handling for different types of errors</li>
+            <li>Enables the program to continue running even after an error occurs</li>
+            <li>Provides opportunities to log error information for debugging</li>
+          </ul>
+
+          <h4>Defensive Programming</h4>
+          <p>Defensive programming anticipates potential problems and builds safeguards into the code to handle unexpected situations.</p>
+
+          <p>Techniques include:</p>
+
+          <ul>
+            <li><strong>Guard clauses</strong>: Early returns or error handling for invalid conditions</li>
+            <li><strong>Default values</strong>: Providing fallbacks when expected values are missing or invalid</li>
+            <li><strong>Null/undefined checks</strong>: Verifying objects and properties exist before accessing them</li>
+            <li><strong>Boundary checking</strong>: Ensuring operations stay within valid ranges</li>
+          </ul>
+
+          <div class="example-box">
+            <h4 class="example-title">Defensive Programming Example</h4>
+            <div class="code-example">
+function getUserName(user) {
+  // Guard clause: Check if user object exists
+  if (!user) {
+    return "Guest";  // Default value
+  }
+
+  // Check if name property exists
+  return user.name || "Unnamed User";  // Default if name is missing
+}
+
+function getElementAtIndex(array, index) {
+  // Check if array is valid
+  if (!Array.isArray(array)) {
+    return null;
+  }
+
+  // Boundary check
+  if (index < 0 || index >= array.length) {
+    return null;  // Index out of bounds
+  }
+
+  return array[index];
+}</div>
+          </div>
+
+          <h4>Graceful Error Recovery</h4>
+          <p>Graceful error recovery involves handling errors in a way that minimizes their impact on the user and the system.</p>
+
+          <p>Strategies include:</p>
+
+          <ul>
+            <li><strong>Clear user messages</strong>: Explaining what went wrong in user-friendly terms</li>
+            <li><strong>Retry mechanisms</strong>: Automatically retrying failed operations when appropriate</li>
+            <li><strong>Partial results</strong>: Returning available data even if some operations failed</li>
+            <li><strong>State preservation</strong>: Saving user work to prevent data loss during errors</li>
+            <li><strong>Fallback options</strong>: Providing alternative functionality when preferred methods fail</li>
+          </ul>
+
+          <div class="example-box">
+            <h4 class="example-title">Error Recovery Example</h4>
+            <div class="code-example">
+async function fetchUserData(userId) {
+  let retries = 3;
+
+  while (retries > 0) {
+    try {
+      // Attempt to fetch data from server
+      const response = await fetch(`/api/users/${userId}`);
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      retries--;
+
+      if (retries === 0) {
+        // After all retries fail, use cached data if available
+        const cachedData = localStorage.getItem(`user_${userId}`);
+
+        if (cachedData) {
+          console.warn("Using cached data due to API failure");
+          return JSON.parse(cachedData);
+        }
+
+        // If no cached data, show error to user
+        displayError("Could not load user data. Please try again later.");
+        return null;
+      }
+
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (3 - retries)));
+    }
+  }
+}</div>
+          </div>
+
+          <div class="note-box">
+            <h4 class="note-title">Best Practices for Error Handling</h4>
+            <p>When handling errors, aim to:</p>
+            <ul>
+              <li>Be specific about what went wrong</li>
+              <li>Provide constructive guidance on how to resolve the issue</li>
+              <li>Log detailed error information for debugging (not visible to users)</li>
+              <li>Maintain security by not revealing sensitive information in error messages</li>
+              <li>Consider the user experience when displaying errors</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary Section -->
+      <section class="content-section" id="summary">
+        <h2 class="section-title">Summary</h2>
+        <div class="section-content">
+          <p>In this topic, we've explored the essential skills and strategies for identifying and correcting errors in programs:</p>
+
+          <ul>
+            <li><strong>Types of Errors</strong>: Understanding the differences between syntax errors (code that violates language rules), runtime errors (issues that occur during execution), and logic errors (incorrect results despite no crashes).</li>
+            <li><strong>Debugging Techniques</strong>: Using tools and methods like print statements, debuggers, rubber duck debugging, and systematic error localization to find and fix issues in code.</li>
+            <li><strong>Testing Methodologies</strong>: Implementing various testing approaches including unit testing, integration testing, and system testing, along with designing effective test cases for normal, edge, and error scenarios.</li>
+            <li><strong>Error Handling Strategies</strong>: Employing input validation, try-catch blocks, defensive programming, and graceful error recovery to make programs more robust and user-friendly even when problems occur.</li>
+          </ul>
+
+          <p>Remember that error identification and correction is an iterative process. Even after fixing an issue, it's important to verify that the solution works and hasn't introduced new problems. With practice, you'll develop a systematic approach to debugging that makes finding and fixing errors more efficient.</p>
+
+          <div class="info-card">
+            <h4>Key Takeaways</h4>
+            <ul>
+              <li>Errors are an inevitable part of programming - even experienced developers make mistakes</li>
+              <li>A systematic approach to debugging is more effective than random code changes</li>
+              <li>Testing should cover normal cases, edge cases, and error cases</li>
+              <li>Defensive programming and proper error handling make programs more robust</li>
+              <li>Good error messages help users understand what went wrong and how to fix it</li>
+              <li>Debugging skills improve with practice and experience</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation Buttons -->
+      <div class="navigation-buttons">
+        <a href="topic-1-3.html" class="btn">Previous: Program Design and Development</a>
+        <a href="topic-1-4-quiz.html" class="btn btn-secondary">Take Topic Quiz</a>
+        <a href="progress-check-1.html" class="btn btn-next">Next: Big Idea 1 Progress Check</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100,
+            behavior: 'smooth'
+          });
+
+          // Update active class for menu links
+          document.querySelectorAll('.menu-link').forEach(link => {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Highlight menu items on scroll
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.content-section');
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 150;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        const scrollPosition = window.scrollY;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          const id = section.getAttribute('id');
+          document.querySelectorAll('.menu-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+
+    // Logout functionality
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      // Clear any session data
+      sessionStorage.removeItem('loggedIn');
+      // Redirect to login page
+      window.location.href = 'index.html';
+    });
+
+    // Ensure user is logged in
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!sessionStorage.getItem('loggedIn')) {
+        // If not logged in, redirect to login
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>
